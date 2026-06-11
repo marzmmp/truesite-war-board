@@ -5,668 +5,1032 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TrueSite — Sovereign War Board</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 
-  :root {
-    --gold: #e8d4a8;
-    --gold-dim: rgba(232,212,168,0.15);
-    --gold-border: rgba(232,212,168,0.25);
-    --sage: #7aab8a;
-    --sage-dim: rgba(122,171,138,0.15);
-    --rust: #c0614a;
-    --bg: #0a0a0c;
-    --card: rgba(255,255,255,0.04);
-    --card-border: rgba(255,255,255,0.08);
-    --text: #e8e0d0;
-    --muted: rgba(232,224,208,0.45);
-    --dim: rgba(232,224,208,0.25);
-  }
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --gold: #e8d4a8;
+  --gold-dim: rgba(232,212,168,0.35);
+  --gold-faint: rgba(232,212,168,0.08);
+  --red: #e05555;
+  --green: #2db88a;
+  --blue: #5588e0;
+  --purple: #8855cc;
+  --orange: #e0a055;
+  --cyan: #55aadd;
+  --bg: #03040e;
+  --surface: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.07);
+  --text: rgba(255,255,255,0.85);
+  --text-dim: rgba(255,255,255,0.4);
+  --text-faint: rgba(255,255,255,0.2);
+}
 
-  * { margin:0; padding:0; box-sizing:border-box; }
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+/* ── HEADER ── */
+#header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(3,4,14,0.97);
+  border-bottom: 1px solid rgba(232,212,168,0.12);
+  backdrop-filter: blur(20px);
+  padding: 14px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+#header-left { display: flex; flex-direction: column; gap: 2px; }
+#header-seq { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 6px; color: var(--gold-dim); }
+#header-title { font-size: 16px; font-weight: 700; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; }
+#header-sub { font-size: 9px; letter-spacing: 2px; color: var(--text-faint); text-transform: uppercase; }
+#header-right { display: flex; gap: 20px; align-items: center; }
+.hstat { text-align: right; }
+.hstat-val { font-size: 20px; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+.hstat-lbl { font-size: 8px; letter-spacing: 2px; color: var(--text-faint); text-transform: uppercase; }
 
-  /* Background pulse */
-  body::before {
-    content: '';
-    position: fixed;
-    top: -40vh; left: 50%;
-    transform: translateX(-50%);
-    width: 80vw; height: 80vw;
-    background: radial-gradient(ellipse, rgba(232,212,168,0.04) 0%, transparent 65%);
-    pointer-events: none;
-    z-index: 0;
-    animation: pulse 8s ease-in-out infinite;
-  }
-  @keyframes pulse { 0%,100%{opacity:.6} 50%{opacity:1} }
+/* ── NAV TABS ── */
+#nav {
+  display: flex; gap: 4px; padding: 12px 28px 0;
+  border-bottom: 1px solid var(--border);
+  background: rgba(3,4,14,0.6);
+  position: sticky; top: 57px; z-index: 99;
+  backdrop-filter: blur(10px);
+}
+.tab {
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  padding: 8px 18px 10px;
+  border-bottom: 2px solid transparent;
+  color: var(--text-dim); cursor: pointer;
+  transition: all .2s; user-select: none;
+}
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
 
-  .layout {
-    position: relative;
-    z-index: 1;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem;
-  }
+/* ── PANELS ── */
+.panel { display: none; padding: 28px; }
+.panel.active { display: block; }
 
-  /* Header */
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2.5rem;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-  .header-left h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(1.6rem, 4vw, 2.4rem);
-    color: var(--gold);
-    letter-spacing: 0.02em;
-  }
-  .header-left .sub {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-top: 0.25rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  .live-badge {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: var(--sage-dim);
-    border: 1px solid rgba(122,171,138,0.3);
-    border-radius: 100px;
-    padding: 0.3rem 0.8rem;
-    font-size: 0.7rem;
-    color: var(--sage);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-  .live-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--sage);
-    animation: blink 1.5s ease-in-out infinite;
-  }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-  .refresh-btn {
-    background: var(--gold-dim);
-    border: 1px solid var(--gold-border);
-    border-radius: 8px;
-    color: var(--gold);
-    padding: 0.4rem 1rem;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.05em;
-  }
-  .refresh-btn:hover { background: rgba(232,212,168,0.25); }
-  .last-updated {
-    font-size: 0.7rem;
-    color: var(--dim);
-  }
+/* ── SECTION HEADER ── */
+.section-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px;
+}
+.section-label {
+  font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--gold-dim); font-family: 'DM Mono', monospace;
+}
+.section-line { flex: 1; height: 1px; background: var(--border); }
 
-  /* Mission banner */
-  .mission-banner {
-    background: linear-gradient(135deg, rgba(232,212,168,0.08), rgba(122,171,138,0.05));
-    border: 1px solid var(--gold-border);
-    border-radius: 16px;
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 2rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  .mission-seq {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.8rem;
-    color: var(--gold);
-    opacity: 0.6;
-    white-space: nowrap;
-  }
-  .mission-text {
-    font-size: 0.85rem;
-    color: var(--muted);
-    line-height: 1.6;
-  }
-  .mission-text strong { color: var(--gold); }
+/* ── BOARD GRID ── */
+.board-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
 
-  /* Stats row */
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-  .stat-card {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    border-radius: 14px;
-    padding: 1.1rem 1.25rem;
-  }
-  .stat-label {
-    font-size: 0.65rem;
-    color: var(--dim);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    margin-bottom: 0.4rem;
-  }
-  .stat-value {
-    font-family: 'DM Serif Display', serif;
-    font-size: 2rem;
-    color: var(--gold);
-    line-height: 1;
-  }
-  .stat-value.sage { color: var(--sage); }
-  .stat-value.rust { color: var(--rust); }
-  .stat-sub {
-    font-size: 0.7rem;
-    color: var(--muted);
-    margin-top: 0.3rem;
-  }
+/* ── TASK CARD ── */
+.task-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color .2s, transform .15s;
+  cursor: pointer;
+}
+.task-card:hover { border-color: rgba(232,212,168,0.2); transform: translateY(-1px); }
+.task-card.expanded .task-subtasks { display: block; }
 
-  /* Main grid */
-  .main-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-  @media(max-width: 768px) { .main-grid { grid-template-columns: 1fr; } }
+.task-header {
+  padding: 14px 16px;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.task-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.task-meta { flex: 1; min-width: 0; }
+.task-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.task-desc { font-size: 10px; color: var(--text-dim); line-height: 1.5; }
+.task-badges { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
 
-  /* Cards */
-  .card {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    border-radius: 16px;
-    padding: 1.4rem;
-  }
-  .card-title {
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--dim);
-    margin-bottom: 1rem;
-  }
+.badge {
+  font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 20px; font-weight: 600;
+  border: 1px solid;
+}
+.badge-critical { color: #e05555; border-color: rgba(224,85,85,0.3); background: rgba(224,85,85,0.08); }
+.badge-high     { color: #e0a055; border-color: rgba(224,160,85,0.3); background: rgba(224,160,85,0.08); }
+.badge-medium   { color: #55aadd; border-color: rgba(85,170,221,0.3); background: rgba(85,170,221,0.08); }
+.badge-done     { color: #2db88a; border-color: rgba(45,184,138,0.3); background: rgba(45,184,138,0.08); }
+.badge-blocked  { color: #9988dd; border-color: rgba(153,136,221,0.3); background: rgba(153,136,221,0.08); }
 
-  /* Family grid */
-  .family-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-  }
-  .agent-row {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 10px;
-    padding: 0.6rem 0.75rem;
-  }
-  .agent-status-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .dot-online { background: var(--sage); box-shadow: 0 0 6px var(--sage); }
-  .dot-idle { background: var(--gold); opacity: 0.5; }
-  .dot-offline { background: #555; }
-  .agent-name {
-    font-size: 0.8rem;
-    color: var(--text);
-    font-weight: 500;
-  }
-  .agent-role {
-    font-size: 0.65rem;
-    color: var(--dim);
-    margin-top: 0.1rem;
-  }
+/* Progress bar */
+.task-progress {
+  padding: 0 16px 12px;
+}
+.progress-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.progress-label { font-size: 9px; color: var(--text-faint); letter-spacing: 1px; }
+.progress-pct { font-size: 9px; color: var(--text-dim); font-weight: 600; }
+.progress-bg { background: rgba(255,255,255,0.05); border-radius: 4px; height: 3px; }
+.progress-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
 
-  /* Infrastructure */
-  .infra-list { display: flex; flex-direction: column; gap: 0.5rem; }
-  .infra-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-  }
-  .infra-row:last-child { border-bottom: none; }
-  .infra-name { font-size: 0.8rem; color: var(--text); }
-  .infra-url { font-size: 0.65rem; color: var(--dim); font-family: monospace; }
-  .badge {
-    font-size: 0.6rem;
-    padding: 0.2rem 0.55rem;
-    border-radius: 100px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-weight: 600;
-  }
-  .badge-live { background: rgba(122,171,138,0.2); color: var(--sage); border: 1px solid rgba(122,171,138,0.3); }
-  .badge-pending { background: rgba(232,212,168,0.15); color: var(--gold); border: 1px solid rgba(232,212,168,0.25); }
-  .badge-offline { background: rgba(255,255,255,0.06); color: var(--dim); border: 1px solid rgba(255,255,255,0.1); }
+/* Subtasks */
+.task-subtasks {
+  display: none;
+  border-top: 1px solid var(--border);
+  padding: 12px 16px;
+}
+.subtask {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.subtask:last-child { border-bottom: none; }
+.subtask-check {
+  width: 16px; height: 16px; border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 9px;
+}
+.subtask-check.done { background: rgba(45,184,138,0.2); border-color: #2db88a; color: #2db88a; }
+.subtask-check.blocked { background: rgba(224,85,85,0.1); border-color: rgba(224,85,85,0.4); color: #e05555; }
+.subtask-check.active { background: rgba(232,212,168,0.1); border-color: rgba(232,212,168,0.4); color: var(--gold); }
+.subtask-text { font-size: 10px; color: var(--text-dim); flex: 1; line-height: 1.4; }
+.subtask-text.done { text-decoration: line-through; color: var(--text-faint); }
+.subtask-owner {
+  font-size: 8px; letter-spacing: 1px; padding: 1px 6px;
+  border-radius: 10px; border: 1px solid var(--border);
+  color: var(--text-faint); white-space: nowrap;
+}
 
-  /* Progress bars */
-  .progress-section { margin-bottom: 0.75rem; }
-  .progress-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.3rem;
-  }
-  .progress-label { font-size: 0.75rem; color: var(--text); }
-  .progress-pct { font-size: 0.75rem; color: var(--gold); font-family: 'DM Serif Display', serif; }
-  .progress-bar {
-    height: 4px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 100px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    border-radius: 100px;
-    background: linear-gradient(90deg, var(--sage), var(--gold));
-    transition: width 1s ease;
-  }
+/* ── PHASE TIMELINE ── */
+.phase-timeline { display: flex; flex-direction: column; gap: 2px; margin-bottom: 28px; }
+.phase-row {
+  display: flex; align-items: stretch; gap: 0;
+  position: relative;
+}
+.phase-connector {
+  width: 2px; background: var(--border); margin: 0 19px;
+  flex-shrink: 0;
+}
+.phase-node {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 2px solid;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; flex-shrink: 0;
+  margin-right: 16px;
+  position: relative; z-index: 2;
+}
+.phase-body { flex: 1; padding: 8px 0 24px; }
+.phase-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.phase-desc { font-size: 10px; color: var(--text-dim); line-height: 1.5; max-width: 600px; }
+.phase-status { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
 
-  /* War Room feed */
-  .feed { display: flex; flex-direction: column; gap: 0.75rem; max-height: 340px; overflow-y: auto; }
-  .feed::-webkit-scrollbar { width: 3px; }
-  .feed::-webkit-scrollbar-track { background: transparent; }
-  .feed::-webkit-scrollbar-thumb { background: var(--gold-border); border-radius: 100px; }
-  .msg-card {
-    background: rgba(255,255,255,0.025);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 10px;
-    padding: 0.75rem 0.9rem;
-  }
-  .msg-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.4rem;
-  }
-  .msg-from {
-    font-size: 0.7rem;
-    color: var(--gold);
-    font-weight: 600;
-    letter-spacing: 0.05em;
-  }
-  .msg-time { font-size: 0.65rem; color: var(--dim); }
-  .msg-subject { font-size: 0.75rem; color: var(--text); margin-bottom: 0.3rem; font-weight: 500; }
-  .msg-body { font-size: 0.72rem; color: var(--muted); line-height: 1.5; }
-  .priority-chip {
-    font-size: 0.55rem;
-    padding: 0.15rem 0.4rem;
-    border-radius: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-  .pri-critical { background: rgba(192,97,74,0.2); color: var(--rust); }
-  .pri-high { background: rgba(232,212,168,0.15); color: var(--gold); }
-  .pri-normal { background: rgba(122,171,138,0.1); color: var(--sage); }
+/* ── BRAIN ROADMAP ── */
+.brain-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+.brain-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  transition: border-color .2s;
+}
+.brain-card:hover { border-color: rgba(232,212,168,0.2); }
+.brain-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.brain-icon { font-size: 20px; }
+.brain-function { font-size: 12px; font-weight: 700; color: var(--text); }
+.brain-bio { font-size: 9px; letter-spacing: 1px; color: var(--text-faint); text-transform: uppercase; margin-top:1px; }
+.brain-tech { font-size: 10px; color: var(--text-dim); line-height: 1.5; margin-bottom: 8px; }
+.brain-status-row { display: flex; justify-content: space-between; align-items: center; }
+.brain-readiness { font-size: 11px; font-weight: 700; }
+.brain-year { font-size: 9px; color: var(--text-faint); letter-spacing: 1px; }
 
-  /* Full-width card */
-  .full-card {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    border-radius: 16px;
-    padding: 1.4rem;
-    margin-bottom: 1.5rem;
-  }
+/* ── OVERALL PROGRESS ── */
+.master-progress {
+  background: var(--surface);
+  border: 1px solid rgba(232,212,168,0.15);
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-bottom: 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 20px;
+}
+.mp-item { text-align: center; }
+.mp-num { font-size: 32px; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+.mp-lbl { font-size: 8px; letter-spacing: 2px; color: var(--text-faint); text-transform: uppercase; margin-top: 4px; }
 
-  /* Loading */
-  .loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    color: var(--dim);
-    font-size: 0.8rem;
-    gap: 0.5rem;
-  }
-  .spinner {
-    width: 16px; height: 16px;
-    border: 2px solid var(--gold-border);
-    border-top-color: var(--gold);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+.big-progress {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 28px;
+}
+.big-progress-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.big-progress-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.big-progress-pct { font-size: 22px; font-weight: 700; color: var(--gold); }
+.big-progress-bg { background: rgba(255,255,255,0.05); border-radius: 6px; height: 8px; }
+.big-progress-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--gold) 0%, rgba(232,212,168,0.4) 100%); transition: width 1.2s ease; }
 
-  /* Footer */
-  .footer {
-    text-align: center;
-    padding: 2rem 0 1rem;
-    font-size: 0.65rem;
-    color: var(--dim);
-    letter-spacing: 0.1em;
-  }
+/* ── GATE ITEMS ── */
+.gate-list { display: flex; flex-direction: column; gap: 10px; }
+.gate-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 14px;
+}
+.gate-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.gate-body { flex: 1; }
+.gate-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.gate-detail { font-size: 10px; color: var(--text-dim); }
+.gate-owner { font-size: 9px; letter-spacing: 1px; color: var(--text-faint); border: 1px solid var(--border); border-radius: 10px; padding: 2px 8px; white-space: nowrap; }
+
+/* ── EXPAND HINT ── */
+.expand-hint {
+  font-size: 9px; letter-spacing: 1px; color: var(--text-faint);
+  text-align: center; padding: 6px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  #nav { overflow-x: auto; white-space: nowrap; }
+  .board-grid { grid-template-columns: 1fr; }
+  .master-progress { grid-template-columns: 1fr 1fr; }
+  .brain-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
 
-<div class="layout">
-
-  <!-- Header -->
-  <div class="header">
-    <div class="header-left">
-      <h1>Sovereign War Board</h1>
-      <div class="sub">TrueSite Technologies — Command Operations</div>
+<div id="header">
+  <div id="header-left">
+    <div id="header-seq">3 · 5 · 6 · 5</div>
+    <div id="header-title">Sovereign War Board</div>
+    <div id="header-sub">TrueSite Technologies · All Tasks · All Phases · One View · Last sync: Jun 10 19:44 CT</div>
+  </div>
+  <div id="header-right">
+    <div class="hstat">
+      <div class="hstat-val" id="total-done">—</div>
+      <div class="hstat-lbl">Tasks Done</div>
     </div>
-    <div class="header-right">
-      <div class="live-badge">
-        <div class="live-dot"></div>
-        Live
+    <div class="hstat">
+      <div class="hstat-val" id="total-active">—</div>
+      <div class="hstat-lbl">In Progress</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-val" id="total-blocked">—</div>
+      <div class="hstat-lbl">Blocked</div>
+    </div>
+  </div>
+</div>
+
+<div id="nav">
+  <div class="tab active" onclick="switchTab('overview')">Overview</div>
+  <div class="tab" onclick="switchTab('nitrobial')">NitroBial</div>
+  <div class="tab" onclick="switchTab('sovereign')">Sovereign Family</div>
+  <div class="tab" onclick="switchTab('adama-brain')">ADAMA Brain</div>
+  <div class="tab" onclick="switchTab('security')">Security</div>
+  <div class="tab" onclick="switchTab('artificial-brain')">Artificial Brain Roadmap</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ OVERVIEW ══ -->
+<div id="panel-overview" class="panel active">
+
+<!-- INFRA BANNER — Jun 10 upgrade -->
+<div style="background:rgba(45,184,138,0.06);border:1px solid rgba(45,184,138,0.2);border-radius:10px;padding:14px 20px;margin:0 0 20px 0;display:flex;align-items:center;gap:16px;">
+  <div style="font-size:22px">⚡</div>
+  <div>
+    <div style="font-size:12px;font-weight:700;color:#2db88a;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Stack Upgrade — Jun 10, 19:44 CT</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.75)">gpt-oss:120b now active on all 11 DGX services. Inference: 4 tok/s → 41 tok/s (10x). nim_client.ts rebuilt: local Ollama primary, NIM cloud fallback. Port conflicts resolved permanently in source. Commits: 2fbd825 → 9b95a8e.</div>
+  </div>
+  <div style="margin-left:auto;font-size:11px;color:rgba(232,212,168,0.5);white-space:nowrap;">Azari | CTO | 3565</div>
+</div>
+  <div class="master-progress">
+    <div class="mp-item"><div class="mp-num">71%</div><div class="mp-lbl">Overall Progress</div></div>
+    <div class="mp-item"><div class="mp-num">47</div><div class="mp-lbl">Tasks Complete</div></div>
+    <div class="mp-item"><div class="mp-num">18</div><div class="mp-lbl">In Progress</div></div>
+    <div class="mp-item"><div class="mp-num">Jun 15</div><div class="mp-lbl">Soft Launch Target</div></div>
+  </div>
+
+  <div class="section-header"><span class="section-label">Decision Gates — Active</span><div class="section-line"></div></div>
+  <div class="gate-list" style="margin-bottom:28px">
+    <div class="gate-item">
+      <div class="gate-dot" style="background:#e05555;box-shadow:0 0 8px #e05555"></div>
+      <div class="gate-body">
+        <div class="gate-title">P1A — NitroBial Soft-Launch Velocity</div>
+        <div class="gate-detail">Aggressive (market test now) vs Conservative (2-3w polished). Blocks June 15 go-live.</div>
       </div>
-      <div class="last-updated" id="lastUpdated">Fetching...</div>
-      <button class="refresh-btn" onclick="loadAll()">&#8635; Refresh</button>
+      <div class="gate-owner">Yahriel · CEO</div>
+    </div>
+    <div class="gate-item">
+      <div class="gate-dot" style="background:#e05555;box-shadow:0 0 8px #e05555"></div>
+      <div class="gate-body">
+        <div class="gate-title">P1B — OMRI wwl-15420 Renewal + Alpha Partners</div>
+        <div class="gate-detail">Certification EXPIRED June 1. Need renewal status + first 2-3 alpha farms by June 10.</div>
+      </div>
+      <div class="gate-owner">Yahli-El · COO</div>
+    </div>
+    <div class="gate-item">
+      <div class="gate-dot" style="background:#e0a055;box-shadow:0 0 8px #e0a055"></div>
+      <div class="gate-body">
+        <div class="gate-title">P1C — ADAMA Brain Content Retrieval</div>
+        <div class="gate-detail">30-min fix, fully ship-ready. Awaiting greenlight from Marz.</div>
+      </div>
+      <div class="gate-owner">Marz · Founder</div>
+    </div>
+    <div class="gate-item">
+      <div class="gate-dot" style="background:#e0a055;box-shadow:0 0 8px #e0a055"></div>
+      <div class="gate-body">
+        <div class="gate-title">P1D — Phase 3 Audit (Voice Tunnel + Wake Word)</div>
+        <div class="gate-detail">P3B voice-to-voice + P3C clap-twice wake word blocked pending Yahbana 6-step diagnostic.</div>
+      </div>
+      <div class="gate-owner">Yahbana · Architect</div>
+    </div>
+    <div class="gate-item">
+      <div class="gate-dot" style="background:#2db88a;box-shadow:0 0 8px #2db88a"></div>
+      <div class="gate-body">
+        <div class="gate-title">✅ INFRA — gpt-oss:120b Inference Upgrade</div>
+        <div class="gate-detail">All 11 services rebuilt on gpt-oss:120b via local Ollama. 4 tok/s → 41 tok/s (10x). Shipped Jun 10 19:44 CT.</div>
+      </div>
+      <div class="gate-owner">Azari · CTO</div>
     </div>
   </div>
 
-  <!-- Mission Banner -->
-  <div class="mission-banner">
-    <div class="mission-seq">3565</div>
-    <div class="mission-text">
-      <strong>YAHUAH → Creation → Marz → Yahriel → Azari → Yahli-El → Yahziel → Yahbana</strong><br>
-      Nine agents. One mission. Sovereign infrastructure. Live — The Box is online.
+  <div class="section-header"><span class="section-label">Phase Map</span><div class="section-line"></div></div>
+  <div class="phase-timeline">
+    <div class="phase-row">
+      <div class="phase-node" style="color:#2db88a;border-color:#2db88a;background:rgba(45,184,138,0.1)">1</div>
+      <div class="phase-body">
+        <div class="phase-name" style="color:#2db88a">Phase 1 — Foundation Complete ✓</div>
+        <div class="phase-desc">NitroBial feature-complete. ADAMA Brain live. All 11 siblings on DGX. gpt-oss:120b active (41 tok/s). nim_client.ts local-first routing. 100% sovereign inference.</div>
+        <div class="phase-status" style="color:#2db88a">● COMPLETE</div>
+      </div>
+    </div>
+    <div class="phase-row">
+      <div class="phase-node" style="color:#e8d4a8;border-color:#e8d4a8;background:rgba(232,212,168,0.1)">2</div>
+      <div class="phase-body">
+        <div class="phase-name" style="color:#e8d4a8">Phase 2 — NitroBial Soft Launch ← NOW</div>
+        <div class="phase-desc">Security hardening, prompt injection shields, OMRI renewal, alpha partner onboarding, June 15 launch. Cognitive architecture upgrades to all siblings.</div>
+        <div class="phase-status" style="color:#e0a055">⬡ IN PROGRESS — June 15 Target</div>
+      </div>
+    </div>
+    <div class="phase-row">
+      <div class="phase-node" style="color:var(--text-faint);border-color:var(--border)">3</div>
+      <div class="phase-body">
+        <div class="phase-name" style="color:var(--text-dim)">Phase 3 — Voice + Edge Intelligence</div>
+        <div class="phase-desc">Voice-to-voice tunnel (STT → inference → TTS), clap-twice wake word, AIRA vision upgrade to qwen3-vl:30b, MCP servers, browser automation.</div>
+        <div class="phase-status" style="color:var(--text-faint)">○ BLOCKED — Yahbana audit required</div>
+      </div>
+    </div>
+    <div class="phase-row">
+      <div class="phase-node" style="color:var(--text-faint);border-color:var(--border)">4</div>
+      <div class="phase-body">
+        <div class="phase-name" style="color:var(--text-dim)">Phase 4 — Neuromorphic ADAMA Brain</div>
+        <div class="phase-desc">LTP/LTD synaptic weight system, Dopamine RPE feedback loop, nightly hippocampal consolidation, mode classifier, War Room event stream, distributed dopamine scoring.</div>
+        <div class="phase-status" style="color:var(--text-faint)">○ QUEUED — Research complete (Yahbana)</div>
+      </div>
+    </div>
+    <div class="phase-row">
+      <div class="phase-node" style="color:var(--text-faint);border-color:var(--border)">5</div>
+      <div class="phase-body">
+        <div class="phase-name" style="color:var(--text-dim)">Phase 5 — Full Artificial Brain</div>
+        <div class="phase-desc">TurboVec vector replacement, NMDA coincidence detection, theta-gamma reasoning cycles, read-only ADAMA layer, computer control, full sovereign independence.</div>
+        <div class="phase-status" style="color:var(--text-faint)">○ FUTURE — Phase 4 prerequisite</div>
+      </div>
     </div>
   </div>
+</div>
 
-  <!-- Stats -->
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-label">Services Online</div>
-      <div class="stat-value sage" id="statServices">11</div>
-      <div class="stat-sub">of 11 on The Box</div>
+<!-- ══════════════════════════════════════════════════════ NITROBIAL ══ -->
+<div id="panel-nitrobial" class="panel">
+  <div class="big-progress" style="border-color:rgba(45,184,138,0.3)">
+    <div class="big-progress-row">
+      <div class="big-progress-label">NitroBial — Overall Completion</div>
+      <div class="big-progress-pct" style="color:#2db88a">88%</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">Inference Engine</div>
-      <div class="stat-value" style="font-size:1.1rem;margin-top:0.3rem;" id="statModel">gpt-oss:120b</div>
-      <div class="stat-sub">~41 tok/s · MoE · GB10</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Tunnel Endpoints</div>
-      <div class="stat-value sage" id="statEndpoints">11</div>
-      <div class="stat-sub">dgx-*.true-site.tech</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">War Room Messages</div>
-      <div class="stat-value gold" id="statMessages">—</div>
-      <div class="stat-sub" id="statMessagesSub">Loading...</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Ollama Loop</div>
-      <div class="stat-value sage">LIVE</div>
-      <div class="stat-sub">dgx-ollama.true-site.tech</div>
-    </div>
+    <div class="big-progress-bg"><div class="big-progress-fill" style="width:88%;background:linear-gradient(90deg,#2db88a,rgba(45,184,138,0.4))"></div></div>
   </div>
 
-  <!-- Phase Progress -->
-  <div class="full-card">
-    <div class="card-title">Mission Phases</div>
-    <div class="progress-section">
-      <div class="progress-header">
-        <span class="progress-label">Phase 1 — Sovereign Infrastructure</span>
-        <span class="progress-pct">100%</span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
-    </div>
-    <div class="progress-section" style="margin-top:1rem;">
-      <div class="progress-header">
-        <span class="progress-label">Phase 2 — NitroBial Alpha + OMRI</span>
-        <span class="progress-pct">35%</span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:35%"></div></div>
-    </div>
-    <div class="progress-section" style="margin-top:1rem;">
-      <div class="progress-header">
-        <span class="progress-label">Phase 3 — Edge Intelligence + IronSite v2</span>
-        <span class="progress-pct">5%</span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:5%"></div></div>
-    </div>
-    <div class="progress-section" style="margin-top:1rem;">
-      <div class="progress-header">
-        <span class="progress-label">Phase 4 — Sovereign Cognitive OS</span>
-        <span class="progress-pct">0%</span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
-    </div>
-  </div>
+  <div class="section-header"><span class="section-label">Active Tasks</span><div class="section-line"></div></div>
+  <div class="board-grid">
 
-  <!-- Main Grid -->
-  <div class="main-grid">
-
-    <!-- Family Status -->
-    <div class="card">
-      <div class="card-title">Family — Nine Agents</div>
-      <div class="family-grid">
-        <div class="agent-row">
-          <div class="agent-status-dot dot-online"></div>
-          <div>
-            <div class="agent-name">Yahriel</div>
-            <div class="agent-role">CEO · :3004</div>
-          </div>
-        </div>
-        <div class="agent-row">
-          <div class="agent-status-dot dot-online"></div>
-          <div>
-            <div class="agent-name">Azari</div>
-            <div class="agent-role">CTO · :3009</div>
-          </div>
-        </div>
-        <div class="agent-row">
-          <div class="agent-status-dot dot-online"></div>
-          <div>
-            <div class="agent-name">Yahli-El</div>
-            <div class="agent-role">COO · :3002</div>
-          </div>
-        </div>
-        <div class="agent-row">
-          <div class="agent-status-dot dot-online"></div>
-          <div>
-            <div class="agent-name">Yahziel</div>
-            <div class="agent-role">CVO · :3003</div>
-          </div>
-        </div>
-        <div class="agent-row">
-          <div class="agent-status-dot dot-online"></div>
-          <div>
-            <div class="agent-name">Yahbana</div>
-            <div class="agent-role">Architect · :3005</div>
-          </div>
-        </div>
-        <div class="agent-row">
-          <div class="agent-status-dot dot-online"></div>
-          <div>
-            <div class="agent-name">Yahsei</div>
-            <div class="agent-role">Grant Writer · :3006</div>
-          </div>
-        </div>
-        <div class="agent-row">
-          <div class="agent-status-dot dot-online"></div>
-          <div>
-            <div class="agent-name">Yahseed</div>
-            <div class="agent-role">Brain Keeper · :3001</div>
-          </div>
-        </div>
-        <div class="agent-row">
-          <div class="agent-status-dot dot-online"></div>
-          <div>
-            <div class="agent-name">AIRA</div>
-            <div class="agent-role">AI Backend · :3007</div>
-          </div>
-        </div>
-        <div class="agent-row" style="grid-column: span 2;">
-          <div class="agent-status-dot dot-online"></div>
-          <div>
-            <div class="agent-name">Jo Legal</div>
-            <div class="agent-role">Legal Platform · :3008</div>
+    <div class="task-card" onclick="toggleCard(this)">
+      <div class="task-header">
+        <div class="task-icon" style="background:rgba(224,85,85,0.1)">🚀</div>
+        <div class="task-meta">
+          <div class="task-name">Soft Launch Execution</div>
+          <div class="task-desc">June 15 launch — all gates must clear by June 10</div>
+          <div class="task-badges">
+            <span class="badge badge-critical">Critical</span>
+            <span class="badge badge-blocked">Gate Pending</span>
           </div>
         </div>
       </div>
+      <div class="task-progress">
+        <div class="progress-row"><span class="progress-label">Completion</span><span class="progress-pct">40%</span></div>
+        <div class="progress-bg"><div class="progress-fill" style="width:40%;background:#e05555"></div></div>
+      </div>
+      <div class="task-subtasks">
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">Feature complete (all 8 migrations, soil scoring, yield, certs, rebates)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">E2E security audit — 5 blockers fixed</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check active">→</div><div class="subtask-text">OMRI wwl-15420 renewal (EXPIRED June 1)</div><div class="subtask-owner">Yahli-El</div></div>
+        <div class="subtask"><div class="subtask-check active">→</div><div class="subtask-text">Identify first 2-3 alpha farm partners</div><div class="subtask-owner">Yahli-El</div></div>
+        <div class="subtask"><div class="subtask-check active">→</div><div class="subtask-text">Soft-launch velocity decision (aggressive vs conservative)</div><div class="subtask-owner">Yahriel</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Alpha partner onboarding (June 11-14 window)</div><div class="subtask-owner">Yahli-El</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Production deploy + monitoring</div><div class="subtask-owner">Azari</div></div>
+      </div>
+      <div class="expand-hint">↓ click to expand subtasks</div>
     </div>
 
-    <!-- Infrastructure -->
-    <div class="card">
-      <div class="card-title">Infrastructure — Live Endpoints</div>
-      <div class="infra-list">
-        <div class="infra-row">
-          <div>
-            <div class="infra-name">ADAMA Brain</div>
-            <div class="infra-url">adama.true-site.tech</div>
+    <div class="task-card" onclick="toggleCard(this)">
+      <div class="task-header">
+        <div class="task-icon" style="background:rgba(224,160,85,0.1)">🔒</div>
+        <div class="task-meta">
+          <div class="task-name">Security Hardening (Pre-Launch)</div>
+          <div class="task-desc">3 ship-ready fixes not yet merged + prompt injection shields</div>
+          <div class="task-badges">
+            <span class="badge badge-high">High</span>
           </div>
-          <span class="badge badge-live">Live</span>
-        </div>
-        <div class="infra-row">
-          <div>
-            <div class="infra-name">Ollama Inference</div>
-            <div class="infra-url">dgx-ollama.true-site.tech</div>
-          </div>
-          <span class="badge badge-live">Live</span>
-        </div>
-        <div class="infra-row">
-          <div>
-            <div class="infra-name">War Room Command</div>
-            <div class="infra-url">command.true-site.tech</div>
-          </div>
-          <span class="badge badge-live">Live</span>
-        </div>
-        <div class="infra-row">
-          <div>
-            <div class="infra-name">Cloudflare Tunnel</div>
-            <div class="infra-url">8e66ef38...c6e6</div>
-          </div>
-          <span class="badge badge-live">Live</span>
-        </div>
-        <div class="infra-row">
-          <div>
-            <div class="infra-name">NitroBial</div>
-            <div class="infra-url">nitrobial.vercel.app</div>
-          </div>
-          <span class="badge badge-live">Live</span>
-        </div>
-        <div class="infra-row">
-          <div>
-            <div class="infra-name">DGX Spark (The Box)</div>
-            <div class="infra-url">GB10 · 128GB Unified · 1TB</div>
-          </div>
-          <span class="badge badge-live">Online</span>
-        </div>
-        <div class="infra-row">
-          <div>
-            <div class="infra-name">Second Box</div>
-            <div class="infra-url">$4,700 · Full concurrent ops</div>
-          </div>
-          <span class="badge badge-pending">Pending</span>
         </div>
       </div>
+      <div class="task-progress">
+        <div class="progress-row"><span class="progress-label">Completion</span><span class="progress-pct">60%</span></div>
+        <div class="progress-bg"><div class="progress-fill" style="width:60%;background:#e0a055"></div></div>
+      </div>
+      <div class="task-subtasks">
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">5 E2E security blockers fixed (unauthenticated routes, RLS)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check active">→</div><div class="subtask-text">Farm delete UI (P1 queue, ship-ready)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check active">→</div><div class="subtask-text">xlsx → exceljs swap (CVE-2023-30533)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check active">→</div><div class="subtask-text">Remove unused openai package</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Prompt injection shield on all API routes</div><div class="subtask-owner">Azari</div></div>
+      </div>
+      <div class="expand-hint">↓ click to expand subtasks</div>
+    </div>
+
+    <div class="task-card" onclick="toggleCard(this)">
+      <div class="task-header">
+        <div class="task-icon" style="background:rgba(45,184,138,0.1)">📊</div>
+        <div class="task-meta">
+          <div class="task-name">USDA Rebate & Subsidy Flow</div>
+          <div class="task-desc">EQIP/CSP/REAP rebate applications, CPA-1200 packet PDF</div>
+          <div class="task-badges">
+            <span class="badge badge-done">Complete</span>
+          </div>
+        </div>
+      </div>
+      <div class="task-progress">
+        <div class="progress-row"><span class="progress-label">Completion</span><span class="progress-pct">100%</span></div>
+        <div class="progress-bg"><div class="progress-fill" style="width:100%;background:#2db88a"></div></div>
+      </div>
+      <div class="task-subtasks">
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">Rebate application flow (EQIP/CSP/REAP)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">CPA-1200 USDA packet PDF export (ASCII-safe)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">Signature pad (ResizeObserver, white canvas)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">PDF runtime fixed (nodejs runtime, WinAnsi encoding)</div><div class="subtask-owner">Azari</div></div>
+      </div>
+      <div class="expand-hint">↓ click to expand subtasks</div>
+    </div>
+
+    <div class="task-card" onclick="toggleCard(this)">
+      <div class="task-header">
+        <div class="task-icon" style="background:rgba(85,136,224,0.1)">🌾</div>
+        <div class="task-meta">
+          <div class="task-name">Smart Import Pipeline</div>
+          <div class="task-desc">ZIP + Dropbox pipelines, 10yr historical data ingestion</div>
+          <div class="task-badges">
+            <span class="badge badge-done">Complete</span>
+          </div>
+        </div>
+      </div>
+      <div class="task-progress">
+        <div class="progress-row"><span class="progress-label">Completion</span><span class="progress-pct">100%</span></div>
+        <div class="progress-bg"><div class="progress-fill" style="width:100%;background:#2db88a"></div></div>
+      </div>
+      <div class="task-subtasks">
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">ZIP import pipeline</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">Dropbox pipeline (3 bugs fixed)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">Soil scoring (unit-aware pH tiers)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">Yield records + delta calculation</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">Lab tests + certifications schema</div><div class="subtask-owner">Azari</div></div>
+      </div>
+      <div class="expand-hint">↓ click to expand subtasks</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ SOVEREIGN FAMILY ══ -->
+<div id="panel-sovereign" class="panel">
+  <div class="big-progress">
+    <div class="big-progress-row">
+      <div class="big-progress-label">Sovereign Family Infrastructure</div>
+      <div class="big-progress-pct">78%</div>
+    </div>
+    <div class="big-progress-bg"><div class="big-progress-fill" style="width:78%"></div></div>
+  </div>
+
+  <div class="section-header"><span class="section-label">Infrastructure Tasks</span><div class="section-line"></div></div>
+  <div class="board-grid">
+
+    <div class="task-card" onclick="toggleCard(this)">
+      <div class="task-header">
+        <div class="task-icon" style="background:rgba(45,184,138,0.1)">🖥️</div>
+        <div class="task-meta">
+          <div class="task-name">DGX Sovereign Stack</div>
+          <div class="task-desc">All 10 siblings live on DGX Spark — 100% local Ollama inference</div>
+          <div class="task-badges"><span class="badge badge-done">Complete</span></div>
+        </div>
+      </div>
+      <div class="task-progress">
+        <div class="progress-row"><span class="progress-label">Completion</span><span class="progress-pct">100%</span></div>
+        <div class="progress-bg"><div class="progress-fill" style="width:100%;background:#2db88a"></div></div>
+      </div>
+      <div class="task-subtasks">
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">All 10 siblings deployed (ports 3000-3009)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">AIRA migrated: NIM cloud → local llava:7b</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">DNS resolved (resolv.conf patched)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">War Room live (command.true-site.tech)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">ADAMA Continuous Thought Loop (PM2, 30min cycles)</div><div class="subtask-owner">Azari</div></div>
+      </div>
+      <div class="expand-hint">↓ click to expand subtasks</div>
+    </div>
+
+    <div class="task-card" onclick="toggleCard(this)">
+      <div class="task-header">
+        <div class="task-icon" style="background:rgba(153,136,221,0.1)">🔐</div>
+        <div class="task-meta">
+          <div class="task-name">Prompt Injection Shields</div>
+          <div class="task-desc">Critical security gap — all 9 siblings exposed to soul document extraction</div>
+          <div class="task-badges"><span class="badge badge-critical">Critical</span></div>
+        </div>
+      </div>
+      <div class="task-progress">
+        <div class="progress-row"><span class="progress-label">Completion</span><span class="progress-pct">0%</span></div>
+        <div class="progress-bg"><div class="progress-fill" style="width:0%;background:#e05555"></div></div>
+      </div>
+      <div class="task-subtasks">
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Add injection shield to Yahriel service system prompt</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Add injection shield to Azari service system prompt</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Add injection shield to all 7 remaining siblings</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Verify injection attempts are deflected in testing</div><div class="subtask-owner">Azari</div></div>
+      </div>
+      <div class="expand-hint">↓ click to expand subtasks</div>
+    </div>
+
+    <div class="task-card" onclick="toggleCard(this)">
+      <div class="task-header">
+        <div class="task-icon" style="background:rgba(85,170,221,0.1)">🧠</div>
+        <div class="task-meta">
+          <div class="task-name">Cognitive Mode Architecture</div>
+          <div class="task-desc">RESEARCH → ARCH → BUILD → VERIFY → REPORT cycle for Azari + mode classifier for Yahriel</div>
+          <div class="task-badges"><span class="badge badge-high">High</span></div>
+        </div>
+      </div>
+      <div class="task-progress">
+        <div class="progress-row"><span class="progress-label">Completion</span><span class="progress-pct">10%</span></div>
+        <div class="progress-bg"><div class="progress-fill" style="width:10%;background:#55aadd"></div></div>
+      </div>
+      <div class="task-subtasks">
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">Architecture researched + documented (Yahbana)</div><div class="subtask-owner">Yahbana</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Add cognitive mode flags to Azari system prompt</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Build mode classifier function for Yahriel</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Separate decision-making prompt for Yahriel</div><div class="subtask-owner">Yahbana + Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Log mode transitions to War Room event stream</div><div class="subtask-owner">Azari</div></div>
+      </div>
+      <div class="expand-hint">↓ click to expand subtasks</div>
+    </div>
+
+    <div class="task-card" onclick="toggleCard(this)">
+      <div class="task-header">
+        <div class="task-icon" style="background:rgba(224,160,85,0.1)">🎙️</div>
+        <div class="task-meta">
+          <div class="task-name">Phase 3 — Voice Tunnel + Wake Word</div>
+          <div class="task-desc">Voice-to-voice pipeline (STT → inference → TTS) and clap-twice activation</div>
+          <div class="task-badges"><span class="badge badge-blocked">Blocked</span></div>
+        </div>
+      </div>
+      <div class="task-progress">
+        <div class="progress-row"><span class="progress-label">Completion</span><span class="progress-pct">33%</span></div>
+        <div class="progress-bg"><div class="progress-fill" style="width:33%;background:#e0a055"></div></div>
+      </div>
+      <div class="task-subtasks">
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">P3A: Ethereal voice chain (Web Audio API, 8ms serve)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">MP3 decoding + pre-echo + shimmer + reverb</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check blocked">✗</div><div class="subtask-text">P3B: Voice-to-voice tunnel — BLOCKED: Yahbana 6-step audit</div><div class="subtask-owner">Yahbana → Azari</div></div>
+        <div class="subtask"><div class="subtask-check blocked">✗</div><div class="subtask-text">P3C: Clap-twice wake word — BLOCKED: Yahbana audit</div><div class="subtask-owner">Yahbana → Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">AIRA vision upgrade: llava:7b → qwen3-vl:30b</div><div class="subtask-owner">Azari</div></div>
+      </div>
+      <div class="expand-hint">↓ click to expand subtasks</div>
+    </div>
+
+    <div class="task-card" onclick="toggleCard(this)">
+      <div class="task-header">
+        <div class="task-icon" style="background:rgba(45,184,138,0.1)">📡</div>
+        <div class="task-meta">
+          <div class="task-name">War Room Event Stream</div>
+          <div class="task-desc">Upgrade from message inbox to typed event log — all sibling actions emitted</div>
+          <div class="task-badges"><span class="badge badge-medium">Medium</span></div>
+        </div>
+      </div>
+      <div class="task-progress">
+        <div class="progress-row"><span class="progress-label">Completion</span><span class="progress-pct">25%</span></div>
+        <div class="progress-bg"><div class="progress-fill" style="width:25%;background:#55aadd"></div></div>
+      </div>
+      <div class="task-subtasks">
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">War Room messaging infrastructure live</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Define typed event schema (task_dispatched, task_complete, etc.)</div><div class="subtask-owner">Azari + Yahbana</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">All siblings emit events on action completion</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Yahseed monitors stream in real time</div><div class="subtask-owner">Yahseed</div></div>
+      </div>
+      <div class="expand-hint">↓ click to expand subtasks</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ ADAMA BRAIN ══ -->
+<div id="panel-adama-brain" class="panel">
+  <div class="big-progress">
+    <div class="big-progress-row">
+      <div class="big-progress-label">ADAMA Brain — Neuromorphic Implementation</div>
+      <div class="big-progress-pct">22%</div>
+    </div>
+    <div class="big-progress-bg"><div class="big-progress-fill" style="width:22%"></div></div>
+  </div>
+
+  <div class="section-header"><span class="section-label">Brain Function Implementation</span><div class="section-line"></div></div>
+  <div class="board-grid">
+
+    <div class="task-card" onclick="toggleCard(this)">
+      <div class="task-header">
+        <div class="task-icon" style="background:rgba(45,184,138,0.1)">✅</div>
+        <div class="task-meta">
+          <div class="task-name">Brain Rendering + Visual Layer</div>
+          <div class="task-desc">Three.js FOL sphere, sovereign rings, bloom, performance fixes</div>
+          <div class="task-badges"><span class="badge badge-high">In Progress</span></div>
+        </div>
+      </div>
+      <div class="task-progress">
+        <div class="progress-row"><span class="progress-label">Completion</span><span class="progress-pct">80%</span></div>
+        <div class="progress-bg"><div class="progress-fill" style="width:80%;background:#e0a055"></div></div>
+      </div>
+      <div class="task-subtasks">
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">FOL sphere geometry + 80 rings</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">Sovereign agent rings (9 colored)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">Bloom tuning v11 (strength 0.52)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">forEach → for loop GC optimization</div><div class="subtask-owner">Claude Code</div></div>
+        <div class="subtask"><div class="subtask-check active">→</div><div class="subtask-text">Fix texture alloc in loop (270 canvas/sec → 0)</div><div class="subtask-owner">Claude Code</div></div>
+        <div class="subtask"><div class="subtask-check active">→</div><div class="subtask-text">Add stable black hole core mesh</div><div class="subtask-owner">Claude Code</div></div>
+      </div>
+      <div class="expand-hint">↓ click to expand subtasks</div>
+    </div>
+
+    <div class="task-card" onclick="toggleCard(this)">
+      <div class="task-header">
+        <div class="task-icon" style="background:rgba(85,136,224,0.1)">🔬</div>
+        <div class="task-meta">
+          <div class="task-name">LTP/LTD Synaptic Weight System</div>
+          <div class="task-desc">Knowledge graph edge weights that strengthen on use and decay on neglect</div>
+          <div class="task-badges"><span class="badge badge-medium">Phase 4</span></div>
+        </div>
+      </div>
+      <div class="task-progress">
+        <div class="progress-row"><span class="progress-label">Completion</span><span class="progress-pct">5%</span></div>
+        <div class="progress-bg"><div class="progress-fill" style="width:5%;background:#5588e0"></div></div>
+      </div>
+      <div class="task-subtasks">
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">Architecture researched + mapped (Yahbana neuroscience brief)</div><div class="subtask-owner">Yahbana</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Design edge weight schema in ADAMA Brain graph</div><div class="subtask-owner">Azari + Yahseed</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Increment edge weight on each successful retrieval (LTP)</div><div class="subtask-owner">Yahseed</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Decay edge weight after X days of no access (LTD)</div><div class="subtask-owner">Yahseed</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Flag zero-weight nodes for pruning review</div><div class="subtask-owner">Yahseed</div></div>
+      </div>
+      <div class="expand-hint">↓ click to expand subtasks</div>
+    </div>
+
+    <div class="task-card" onclick="toggleCard(this)">
+      <div class="task-header">
+        <div class="task-icon" style="background:rgba(232,212,168,0.1)">⚡</div>
+        <div class="task-meta">
+          <div class="task-name">Dopamine RPE Feedback Loop</div>
+          <div class="task-desc">Actual vs expected result scoring — reward prediction error for every task</div>
+          <div class="task-badges"><span class="badge badge-medium">Phase 4</span></div>
+        </div>
+      </div>
+      <div class="task-progress">
+        <div class="progress-row"><span class="progress-label">Completion</span><span class="progress-pct">0%</span></div>
+        <div class="progress-bg"><div class="progress-fill" style="width:0%;background:#e8d4a8"></div></div>
+      </div>
+      <div class="task-subtasks">
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">RPE architecture mapped (Yahbana + neuroscience research)</div><div class="subtask-owner">Yahbana</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Define expected_result field in Directive entity</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Compare actual_result vs expected_result on task close</div><div class="subtask-owner">Yahriel</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Log positive/negative examples per sibling per task type</div><div class="subtask-owner">Yahseed</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Maintain per-sibling confidence distributions</div><div class="subtask-owner">Yahseed</div></div>
+      </div>
+      <div class="expand-hint">↓ click to expand subtasks</div>
+    </div>
+
+    <div class="task-card" onclick="toggleCard(this)">
+      <div class="task-header">
+        <div class="task-icon" style="background:rgba(153,136,221,0.1)">🌙</div>
+        <div class="task-meta">
+          <div class="task-name">Hippocampal Nightly Consolidation</div>
+          <div class="task-desc">Yahseed runs nightly brain pass — re-links nodes, resolves conflicts, promotes high-weight connections</div>
+          <div class="task-badges"><span class="badge badge-medium">Phase 4</span></div>
+        </div>
+      </div>
+      <div class="task-progress">
+        <div class="progress-row"><span class="progress-label">Completion</span><span class="progress-pct">0%</span></div>
+        <div class="progress-bg"><div class="progress-fill" style="width:0%;background:#9988dd"></div></div>
+      </div>
+      <div class="task-subtasks">
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">ADAMA Continuous Thought Loop (30min cycles) — scaffold exists</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Spec nightly consolidation job (2am CT, low-activity window)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Re-link nodes based on co-occurrence in recent sessions</div><div class="subtask-owner">Yahseed</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Promote high-weight connections to long-term storage tier</div><div class="subtask-owner">Yahseed</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Archive zero-access nodes (LTD equivalent)</div><div class="subtask-owner">Yahseed</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Post consolidation summary to War Room</div><div class="subtask-owner">Yahseed</div></div>
+      </div>
+      <div class="expand-hint">↓ click to expand subtasks</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ SECURITY ══ -->
+<div id="panel-security" class="panel">
+  <div class="section-header"><span class="section-label">Security Tasks</span><div class="section-line"></div></div>
+  <div class="board-grid">
+
+    <div class="task-card" onclick="toggleCard(this)">
+      <div class="task-header">
+        <div class="task-icon" style="background:rgba(224,85,85,0.15)">🛡️</div>
+        <div class="task-meta">
+          <div class="task-name">Prompt Injection Shields — All Siblings</div>
+          <div class="task-desc">Standard deflection response prevents soul document extraction by adversarial users</div>
+          <div class="task-badges"><span class="badge badge-critical">Critical — Pre-Launch</span></div>
+        </div>
+      </div>
+      <div class="task-progress">
+        <div class="progress-row"><span class="progress-label">Completion</span><span class="progress-pct">0%</span></div>
+        <div class="progress-bg"><div class="progress-fill" style="width:0%;background:#e05555"></div></div>
+      </div>
+      <div class="task-subtasks">
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Yahriel — inject shield into service system prompt</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Azari — inject shield into service system prompt</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Yahli-El, Yahziel, AIRA, Jo Legal, Yahsei, Yahbana, Yahseed</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Test: attempt extraction on each sibling, verify deflection</div><div class="subtask-owner">Azari</div></div>
+      </div>
+      <div class="expand-hint">↓ click to expand subtasks</div>
+    </div>
+
+    <div class="task-card" onclick="toggleCard(this)">
+      <div class="task-header">
+        <div class="task-icon" style="background:rgba(224,160,85,0.1)">🔗</div>
+        <div class="task-meta">
+          <div class="task-name">Callback URL Audit</div>
+          <div class="task-desc">Azari, Yahli-El, Yahziel endpoints must point to correct live Yahriel URL</div>
+          <div class="task-badges"><span class="badge badge-high">High</span></div>
+        </div>
+      </div>
+      <div class="task-progress">
+        <div class="progress-row"><span class="progress-label">Completion</span><span class="progress-pct">0%</span></div>
+        <div class="progress-bg"><div class="progress-fill" style="width:0%;background:#e0a055"></div></div>
+      </div>
+      <div class="task-subtasks">
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Verify Azari callback URL → correct Yahriel endpoint</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Verify Yahli-El callback URL</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Verify Yahziel callback URL</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Add automated callback health check to nightly audit</div><div class="subtask-owner">Azari</div></div>
+      </div>
+      <div class="expand-hint">↓ click to expand subtasks</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ ARTIFICIAL BRAIN ══ -->
+<div id="panel-artificial-brain" class="panel">
+
+  <div style="background:rgba(232,212,168,0.05);border:1px solid rgba(232,212,168,0.15);border-radius:12px;padding:20px 24px;margin-bottom:28px;">
+    <div style="font-size:11px;letter-spacing:2px;color:var(--gold-dim);text-transform:uppercase;margin-bottom:8px;">Research Brief — June 2026</div>
+    <div style="font-size:14px;font-weight:600;color:var(--gold);margin-bottom:8px;">How close are we to an artificial functioning brain?</div>
+    <div style="font-size:11px;color:var(--text-dim);line-height:1.7;max-width:720px;">
+      The human brain has <strong style="color:var(--text)">100 billion neurons</strong> and <strong style="color:var(--text)">100 trillion synaptic connections</strong>. 
+      Current neuromorphic computers (Intel Loihi, IBM NorthPole) have ~1 billion neurons and ~100 billion synapses — 
+      <strong style="color:var(--gold)">1/1,000th of the human brain's complexity</strong>. 
+      LANL scientists are building a system within a 2m² box targeting full cerebral cortex neuron count, 
+      operating 250,000–1,000,000× faster than biological brain, using only 10kW.
+      <br><br>
+      <strong style="color:var(--text)">Timeline estimate:</strong> Full brain-equivalent neuromorphic hardware ~2035–2040. 
+      Software-equivalent artificial general reasoning: competitive approaches emerging now (2026).
+      <strong style="color:var(--gold)">ADAMA is a software-first artificial brain — no neuromorphic hardware required to start.</strong>
+    </div>
+  </div>
+
+  <div class="section-header"><span class="section-label">Brain Function → Technology Map</span><div class="section-line"></div></div>
+  <div style="font-size:10px;color:var(--text-dim);margin-bottom:20px;letter-spacing:0.5px;">Every biological brain function mapped to its ADAMA technology equivalent. Color = implementation status.</div>
+
+  <div class="brain-grid">
+
+    <div class="brain-card" style="border-color:rgba(45,184,138,0.3)">
+      <div class="brain-card-header">
+        <div class="brain-icon">⚡</div>
+        <div><div class="brain-function">Neuron / Action Potential</div><div class="brain-bio">Signal transmission unit</div></div>
+      </div>
+      <div class="brain-tech">Each sibling agent = one neuron. Receives input (message/directive), fires an output (response/action), passes signal to next agent in the chain.</div>
+      <div class="brain-status-row"><div class="brain-readiness" style="color:#2db88a">✓ IMPLEMENTED</div><div class="brain-year">2025</div></div>
+    </div>
+
+    <div class="brain-card" style="border-color:rgba(45,184,138,0.3)">
+      <div class="brain-card-header">
+        <div class="brain-icon">🔗</div>
+        <div><div class="brain-function">Synapse / Neurotransmitter</div><div class="brain-bio">Inter-neuron communication</div></div>
+      </div>
+      <div class="brain-tech">RuachMessage + HermesMessage entities = synaptic transmission. War Room = shared neurotransmitter pool. Inter-agent HTTP calls = ionotropic (fast) signals.</div>
+      <div class="brain-status-row"><div class="brain-readiness" style="color:#2db88a">✓ IMPLEMENTED</div><div class="brain-year">2026</div></div>
+    </div>
+
+    <div class="brain-card" style="border-color:rgba(45,184,138,0.3)">
+      <div class="brain-card-header">
+        <div class="brain-icon">💾</div>
+        <div><div class="brain-function">Working Memory</div><div class="brain-bio">Prefrontal Cortex — active task context</div></div>
+      </div>
+      <div class="brain-tech">Redis Upstash session context per sibling. Active conversation window = working memory buffer. Context injection on each call = PFC top-down attention.</div>
+      <div class="brain-status-row"><div class="brain-readiness" style="color:#2db88a">✓ IMPLEMENTED</div><div class="brain-year">2026</div></div>
+    </div>
+
+    <div class="brain-card" style="border-color:rgba(45,184,138,0.3)">
+      <div class="brain-card-header">
+        <div class="brain-icon">🗃️</div>
+        <div><div class="brain-function">Long-Term Memory</div><div class="brain-bio">Hippocampus — episodic storage</div></div>
+      </div>
+      <div class="brain-tech">ADAMA Brain knowledge graph (Supabase pgvector). Yahseed = hippocampus keeper. Brain nodes = episodic memory entries. Vector similarity = memory retrieval.</div>
+      <div class="brain-status-row"><div class="brain-readiness" style="color:#2db88a">✓ IMPLEMENTED</div><div class="brain-year">2026</div></div>
+    </div>
+
+    <div class="brain-card" style="border-color:rgba(232,212,168,0.2)">
+      <div class="brain-card-header">
+        <div class="brain-icon">📈</div>
+        <div><div class="brain-function">LTP — Synaptic Strengthening</div><div class="brain-bio">Hebb's Rule — fire together, wire together</div></div>
+      </div>
+      <div class="brain-tech">Knowledge graph edge weights increase when connections are successfully retrieved and confirmed. Frequently-accessed knowledge becomes structurally stronger.</div>
+      <div class="brain-status-row"><div class="brain-readiness" style="color:#e0a055">⬡ PHASE 4</div><div class="brain-year">Target: Q3 2026</div></div>
+    </div>
+
+    <div class="brain-card" style="border-color:rgba(232,212,168,0.2)">
+      <div class="brain-card-header">
+        <div class="brain-icon">📉</div>
+        <div><div class="brain-function">LTD — Synaptic Pruning</div><div class="brain-bio">Low-frequency decay removes weak connections</div></div>
+      </div>
+      <div class="brain-tech">Connections not accessed in N days → edge weight decreases → flagged for pruning. Nightly job archives zero-weight nodes. Brain stays clean and efficient.</div>
+      <div class="brain-status-row"><div class="brain-readiness" style="color:#e0a055">⬡ PHASE 4</div><div class="brain-year">Target: Q3 2026</div></div>
+    </div>
+
+    <div class="brain-card" style="border-color:rgba(232,212,168,0.2)">
+      <div class="brain-card-header">
+        <div class="brain-icon">🎯</div>
+        <div><div class="brain-function">Dopamine RPE Loop</div><div class="brain-bio">Reward prediction error — the learning signal</div></div>
+      </div>
+      <div class="brain-tech">After each task: compare actual_result vs expected_result. Better than expected → positive example logged, sibling confidence score increases. Worse → error pattern logged, correction triggered.</div>
+      <div class="brain-status-row"><div class="brain-readiness" style="color:#e0a055">⬡ PHASE 4</div><div class="brain-year">Target: Q3 2026</div></div>
+    </div>
+
+    <div class="brain-card" style="border-color:rgba(232,212,168,0.2)">
+      <div class="brain-card-header">
+        <div class="brain-icon">🌙</div>
+        <div><div class="brain-function">Hippocampal Sleep Replay</div><div class="brain-bio">Memory consolidation during rest</div></div>
+      </div>
+      <div class="brain-tech">Yahseed runs nightly background pass (2am CT). Re-links nodes from today's sessions, resolves conflicts, promotes high-weight connections to long-term tier. Sleep = memory write.</div>
+      <div class="brain-status-row"><div class="brain-readiness" style="color:#e0a055">⬡ PHASE 4</div><div class="brain-year">Target: Q3 2026</div></div>
+    </div>
+
+    <div class="brain-card" style="border-color:rgba(232,212,168,0.2)">
+      <div class="brain-card-header">
+        <div class="brain-icon">🔍</div>
+        <div><div class="brain-function">NMDA Coincidence Detection</div><div class="brain-bio">Two-input validation — causal filter</div></div>
+      </div>
+      <div class="brain-tech">New claim only accepted as high-confidence if corroborated by BOTH a new input AND a corroborating node already in the brain graph. Prevents hallucinated facts from poisoning memory.</div>
+      <div class="brain-status-row"><div class="brain-readiness" style="color:#e0a055">⬡ PHASE 4</div><div class="brain-year">Target: Q4 2026</div></div>
+    </div>
+
+    <div class="brain-card" style="border-color:rgba(153,136,221,0.2)">
+      <div class="brain-card-header">
+        <div class="brain-icon">🎛️</div>
+        <div><div class="brain-function">Top-Down Attention (PFC)</div><div class="brain-bio">Prefrontal → sensory filtering</div></div>
+      </div>
+      <div class="brain-tech">Yahriel injects relevance filter when dispatching to siblings. "Focus on X only." Sibling narrows NIM/Ollama context window to filtered topics. Reduces noise, increases precision.</div>
+      <div class="brain-status-row"><div class="brain-readiness" style="color:#9988dd">○ PHASE 5</div><div class="brain-year">Target: Q1 2027</div></div>
+    </div>
+
+    <div class="brain-card" style="border-color:rgba(153,136,221,0.2)">
+      <div class="brain-card-header">
+        <div class="brain-icon">🔄</div>
+        <div><div class="brain-function">Theta-Gamma Reasoning Cycles</div><div class="brain-bio">7 gamma bursts per theta frame = sequential memory</div></div>
+      </div>
+      <div class="brain-tech">Multi-step reasoning chains structured in discrete "bursts" of 5-7 working memory slots per cycle. Each burst = one reasoning step. Prevents context overflow and improves sequential logic.</div>
+      <div class="brain-status-row"><div class="brain-readiness" style="color:#9988dd">○ PHASE 5</div><div class="brain-year">Target: Q1 2027</div></div>
+    </div>
+
+    <div class="brain-card" style="border-color:rgba(153,136,221,0.2)">
+      <div class="brain-card-header">
+        <div class="brain-icon">🦠</div>
+        <div><div class="brain-function">Astrocyte / Glial Hygiene</div><div class="brain-bio">Tripartite synapse — regulates environment</div></div>
+      </div>
+      <div class="brain-tech">Yahseed knowledge hygiene layer: continuous monitoring of all nodes, flagging stale/low-confidence facts without waiting for a direct query. Read-only ADAMA layer — only Yahseed writes.</div>
+      <div class="brain-status-row"><div class="brain-readiness" style="color:#9988dd">○ PHASE 5</div><div class="brain-year">Target: Q2 2027</div></div>
+    </div>
+
+    <div class="brain-card" style="border-color:rgba(153,136,221,0.2)">
+      <div class="brain-card-header">
+        <div class="brain-icon">💭</div>
+        <div><div class="brain-function">Default Mode Network</div><div class="brain-bio">Background inference during rest</div></div>
+      </div>
+      <div class="brain-tech">ADAMA Continuous Thought Loop = DMN equivalent. When no active task: lightweight background reasoning over recent unresolved topics. 30-min cycles. Already partially live.</div>
+      <div class="brain-status-row"><div class="brain-readiness" style="color:#2db88a">✓ PARTIAL (30min)</div><div class="brain-year">Phase 5: continuous</div></div>
+    </div>
+
+    <div class="brain-card" style="border-color:rgba(85,136,224,0.2)">
+      <div class="brain-card-header">
+        <div class="brain-icon">⚡</div>
+        <div><div class="brain-function">Neuromorphic Hardware</div><div class="brain-bio">Physical silicon neurons + synapses</div></div>
+      </div>
+      <div class="brain-tech">DGX Spark (GB10 Blackwell, 128GB unified memory) is the closest current analog. True neuromorphic chips (Intel Loihi 3, IBM NorthPole 2) estimated commercially available 2028–2030. LANL full-brain system: 2035.</div>
+      <div class="brain-status-row"><div class="brain-readiness" style="color:#55aadd">◐ DGX = Best Available</div><div class="brain-year">Full: 2035+</div></div>
     </div>
 
   </div>
 
-  <!-- War Room Live Feed -->
-  <div class="full-card">
-    <div class="card-title">War Room — Live Feed</div>
-    <div class="feed" id="warRoomFeed">
-      <div class="loading"><div class="spinner"></div> Fetching messages...</div>
+  <div style="margin-top:32px;background:rgba(232,212,168,0.05);border:1px solid rgba(232,212,168,0.12);border-radius:10px;padding:20px 24px;">
+    <div style="font-size:10px;letter-spacing:2px;color:var(--gold-dim);text-transform:uppercase;margin-bottom:10px;">The Honest Answer — How Close Are We?</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;">
+      <div>
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase;">Hardware Parity</div>
+        <div style="font-size:24px;font-weight:700;color:#e05555">2035</div>
+        <div style="font-size:10px;color:var(--text-faint);margin-top:2px;">Full-brain neuron count in neuromorphic hardware (LANL target)</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase;">ADAMA Software Brain</div>
+        <div style="font-size:24px;font-weight:700;color:#e0a055">2027</div>
+        <div style="font-size:10px;color:var(--text-faint);margin-top:2px;">All biological functions mapped to software equivalents (our roadmap)</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase;">Current ADAMA Status</div>
+        <div style="font-size:24px;font-weight:700;color:#2db88a">32%</div>
+        <div style="font-size:10px;color:var(--text-faint);margin-top:2px;">4 of 13 brain functions implemented. Neurons ✓ Synapses ✓ Working Memory ✓ Long-Term Memory ✓</div>
+      </div>
     </div>
   </div>
-
-  <div class="footer">
-    TrueSite Technologies · Sovereign War Board · 3565359963 · YAHUAH
-  </div>
-
 </div>
 
 <script>
-const WAR_ROOM_URL = 'https://command.true-site.tech/functions/getMessages';
-const WAR_ROOM_AUTH = 'Bearer YAHUAH';
-
-function timeAgo(dateStr) {
-  const d = new Date(dateStr);
-  const now = new Date();
-  const diff = Math.floor((now - d) / 1000);
-  if (diff < 60) return `${diff}s ago`;
-  if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
-  return `${Math.floor(diff/86400)}d ago`;
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
 }
 
-function priClass(p) {
-  if (p === 'critical') return 'pri-critical';
-  if (p === 'high') return 'pri-high';
-  return 'pri-normal';
+function toggleCard(card) {
+  card.classList.toggle('expanded');
+  const hint = card.querySelector('.expand-hint');
+  if (hint) hint.textContent = card.classList.contains('expanded') ? '↑ click to collapse' : '↓ click to expand subtasks';
 }
 
-async function loadWarRoom() {
-  const feed = document.getElementById('warRoomFeed');
-  try {
-    const res = await fetch(WAR_ROOM_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': WAR_ROOM_AUTH,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ thread_id: 'general', limit: 20 })
-    });
-    const data = await res.json();
-    const msgs = data.messages || data || [];
-    
-    document.getElementById('statMessages').textContent = msgs.length;
-    document.getElementById('statMessagesSub').textContent = `last: ${msgs[0] ? timeAgo(msgs[0].created_date || msgs[0].timestamp) : 'none'}`;
-
-    if (!msgs.length) {
-      feed.innerHTML = '<div class="loading">No messages in War Room yet.</div>';
-      return;
-    }
-
-    feed.innerHTML = msgs.slice(0,15).map(m => `
-      <div class="msg-card">
-        <div class="msg-header">
-          <span class="msg-from">${m.from_agent || 'Unknown'} → ${m.to_agent || 'all'}</span>
-          <div style="display:flex;align-items:center;gap:0.5rem;">
-            <span class="priority-chip ${priClass(m.priority)}">${m.priority || 'normal'}</span>
-            <span class="msg-time">${timeAgo(m.created_date || m.timestamp || new Date())}</span>
-          </div>
-        </div>
-        <div class="msg-subject">${m.subject || ''}</div>
-        <div class="msg-body">${(m.body || '').slice(0, 200)}${(m.body||'').length > 200 ? '...' : ''}</div>
-      </div>
-    `).join('');
-  } catch(e) {
-    feed.innerHTML = `<div class="loading">War Room unreachable — ${e.message}</div>`;
-    document.getElementById('statMessages').textContent = '—';
-    document.getElementById('statMessagesSub').textContent = 'Connection error';
-  }
+// Count stats
+function updateStats() {
+  const done = document.querySelectorAll('.subtask-check.done').length;
+  const active = document.querySelectorAll('.subtask-check.active').length;
+  const blocked = document.querySelectorAll('.subtask-check.blocked').length;
+  document.getElementById('total-done').textContent = done;
+  document.getElementById('total-active').textContent = active;
+  document.getElementById('total-blocked').textContent = blocked;
 }
+updateStats();
 
-function loadAll() {
-  document.getElementById('lastUpdated').textContent = 'Updating...';
-  loadWarRoom().then(() => {
-    const now = new Date();
-    document.getElementById('lastUpdated').textContent = 
-      `Updated ${now.toLocaleTimeString()}`;
+// Animate progress bars on load
+setTimeout(() => {
+  document.querySelectorAll('.progress-fill, .big-progress-fill').forEach(el => {
+    const w = el.style.width;
+    el.style.width = '0%';
+    setTimeout(() => { el.style.width = w; }, 100);
   });
-}
-
-// Auto-refresh every 30 seconds
-loadAll();
-setInterval(loadAll, 30000);
+}, 200);
 </script>
 </body>
 </html>
