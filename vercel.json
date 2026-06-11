@@ -1,0 +1,17 @@
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "ALLOW-FROM https://family.true-site.tech"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'self' https://family.true-site.tech https://*.true-site.tech"
+        }
+      ]
+    }
+  ]
+}
