@@ -261,21 +261,21 @@
   .badge-offline { background: rgba(255,255,255,0.06); color: var(--dim); border: 1px solid rgba(255,255,255,0.1); }
 
   /* Progress bars */
-  .progress-section { margin-bottom: 0.75rem; }
-  .progress-header {
+  .wr-progress-section { margin-bottom: 0.75rem; }
+  .wr-progress-header {
     display: flex;
     justify-content: space-between;
     margin-bottom: 0.3rem;
   }
-  .progress-label { font-size: 0.75rem; color: var(--text); }
-  .progress-pct { font-size: 0.75rem; color: var(--gold); font-family: 'DM Serif Display', serif; }
-  .progress-bar {
+  .wr-progress-label { font-size: 0.75rem; color: var(--text); }
+  .wr-progress-pct { font-size: 0.75rem; color: var(--gold); font-family: 'DM Serif Display', serif; }
+  .wr-progress-bar {
     height: 4px;
     background: rgba(255,255,255,0.06);
     border-radius: 100px;
     overflow: hidden;
   }
-  .progress-fill {
+  .wr-progress-fill {
     height: 100%;
     border-radius: 100px;
     background: linear-gradient(90deg, var(--sage), var(--gold));
@@ -361,7 +361,7 @@
     display: flex;
     gap: 0;
     border-bottom: 1px solid rgba(232,212,168,0.12);
-    margin-bottom: 24px;
+    margin-bottom: 0;
     position: relative;
     z-index: 10;
   }
@@ -386,10 +386,10 @@
 </style>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 
-500;600;700&family=DM+Mono:wght@#main-panel-task-board 400;500&display=swap');
-
-* { margin:0; padding:0; box-sizing:border-box; }:root {
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
   --gold: #e8d4a8;
   --gold-dim: rgba(232,212,168,0.35);
   --gold-faint: rgba(232,212,168,0.08);
@@ -405,13 +405,17 @@
   --text: rgba(255,255,255,0.85);
   --text-dim: rgba(255,255,255,0.4);
   --text-faint: rgba(255,255,255,0.2);
-}html, body {
+}
+
+html, body {
   background: var(--bg);
   color: var(--text);
   font-family: 'DM Sans', system-ui, sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
-}#main-panel-task-board /* ── HEADER ── */
+}
+
+/* ── HEADER ── */
 #header {
   position: sticky; top: 0; z-index: 100;
   background: rgba(3,4,14,0.97);
@@ -419,33 +423,57 @@
   backdrop-filter: blur(20px);
   padding: 14px 28px;
   display: flex; align-items: center; justify-content: space-between;
-}#main-panel-task-board #header-left { display: flex; flex-direction: column; gap: 2px; }#main-panel-task-board #header-seq { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 6px; color: var(--gold-dim); }#main-panel-task-board #header-title { font-size: 16px; font-weight: 700; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; }#main-panel-task-board #header-sub { font-size: 9px; letter-spacing: 2px; color: var(--text-faint); text-transform: uppercase; }#main-panel-task-board #header-right { display: flex; gap: 20px; align-items: center; }#main-panel-task-board .hstat { text-align: right; }#main-panel-task-board .hstat-val { font-size: 20px; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }#main-panel-task-board .hstat-lbl { font-size: 8px; letter-spacing: 2px; color: var(--text-faint); text-transform: uppercase; }#main-panel-task-board /* ── NAV TABS ── */
+}
+#header-left { display: flex; flex-direction: column; gap: 2px; }
+#header-seq { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 6px; color: var(--gold-dim); }
+#header-title { font-size: 16px; font-weight: 700; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; }
+#header-sub { font-size: 9px; letter-spacing: 2px; color: var(--text-faint); text-transform: uppercase; }
+#header-right { display: flex; gap: 20px; align-items: center; }
+.hstat { text-align: right; }
+.hstat-val { font-size: 20px; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+.hstat-lbl { font-size: 8px; letter-spacing: 2px; color: var(--text-faint); text-transform: uppercase; }
+
+/* ── NAV TABS ── */
 #nav {
   display: flex; gap: 4px; padding: 12px 28px 0;
   border-bottom: 1px solid var(--border);
   background: rgba(3,4,14,0.6);
   position: sticky; top: 57px; z-index: 99;
   backdrop-filter: blur(10px);
-}#main-panel-task-board .tab {
+}
+.tab {
   font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
   padding: 8px 18px 10px;
   border-bottom: 2px solid transparent;
   color: var(--text-dim); cursor: pointer;
   transition: all .2s; user-select: none;
-}#main-panel-task-board .tab:hover { color: var(--text); }#main-panel-task-board .tab.active { color: var(--gold); border-bottom-color: var(--gold); }#main-panel-task-board /* ── PANELS ── */
-.panel { display: none; padding: 28px; }#main-panel-task-board .panel.active { display: block; }#main-panel-task-board /* ── SECTION HEADER ── */
+}
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ── PANELS ── */
+.panel { display: none; padding: 28px; }
+.panel.active { display: block; }
+
+/* ── SECTION HEADER ── */
 .section-header {
   display: flex; align-items: center; gap: 12px;
   margin-bottom: 20px;
-}#main-panel-task-board .section-label {
+}
+.section-label {
   font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
   color: var(--gold-dim); font-family: 'DM Mono', monospace;
-}#main-panel-task-board .section-line { flex: 1; height: 1px; background: var(--border); }#main-panel-task-board /* ── BOARD GRID ── */
+}
+.section-line { flex: 1; height: 1px; background: var(--border); }
+
+/* ── BOARD GRID ── */
 .board-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 16px;
-}#main-panel-task-board /* ── TASK CARD ── */
+}
+
+/* ── TASK CARD ── */
 .task-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -453,64 +481,121 @@
   overflow: hidden;
   transition: border-color .2s, transform .15s;
   cursor: pointer;
-}#main-panel-task-board .task-card:hover { border-color: rgba(232,212,168,0.2); transform: translateY(-1px); }#main-panel-task-board .task-card.expanded .task-subtasks { display: block; }#main-panel-task-board .task-header {
+}
+.task-card:hover { border-color: rgba(232,212,168,0.2); transform: translateY(-1px); }
+.task-card.expanded .task-subtasks { display: block; }
+
+.task-header {
   padding: 14px 16px;
   display: flex; align-items: flex-start; gap: 12px;
-}#main-panel-task-board .task-icon {
+}
+.task-icon {
   width: 36px; height: 36px; border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
   font-size: 16px; flex-shrink: 0;
-}#main-panel-task-board .task-meta { flex: 1; min-width: 0; }#main-panel-task-board .task-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }#main-panel-task-board .task-desc { font-size: 10px; color: var(--text-dim); line-height: 1.5; }#main-panel-task-board .task-badges { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }#main-panel-task-board .badge {
+}
+.task-meta { flex: 1; min-width: 0; }
+.task-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.task-desc { font-size: 10px; color: var(--text-dim); line-height: 1.5; }
+.task-badges { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+
+.badge {
   font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase;
   padding: 2px 8px; border-radius: 20px; font-weight: 600;
   border: 1px solid;
-}#main-panel-task-board .badge-critical { color: #e05555; border-color: rgba(224,85,85,0.3); background: rgba(224,85,85,0.08); }#main-panel-task-board .badge-high { color: #e0a055; border-color: rgba(224,160,85,0.3); background: rgba(224,160,85,0.08); }#main-panel-task-board .badge-medium { color: #55aadd; border-color: rgba(85,170,221,0.3); background: rgba(85,170,221,0.08); }#main-panel-task-board .badge-done { color: #2db88a; border-color: rgba(45,184,138,0.3); background: rgba(45,184,138,0.08); }#main-panel-task-board .badge-blocked { color: #9988dd; border-color: rgba(153,136,221,0.3); background: rgba(153,136,221,0.08); }#main-panel-task-board /* Progress bar */
+}
+.badge-critical { color: #e05555; border-color: rgba(224,85,85,0.3); background: rgba(224,85,85,0.08); }
+.badge-high     { color: #e0a055; border-color: rgba(224,160,85,0.3); background: rgba(224,160,85,0.08); }
+.badge-medium   { color: #55aadd; border-color: rgba(85,170,221,0.3); background: rgba(85,170,221,0.08); }
+.badge-done     { color: #2db88a; border-color: rgba(45,184,138,0.3); background: rgba(45,184,138,0.08); }
+.badge-blocked  { color: #9988dd; border-color: rgba(153,136,221,0.3); background: rgba(153,136,221,0.08); }
+
+/* Progress bar */
 .task-progress {
   padding: 0 16px 12px;
-}#main-panel-task-board .progress-row { display: flex; justify-content: space-between; margin-bottom: 5px; }#main-panel-task-board .progress-label { font-size: 9px; color: var(--text-faint); letter-spacing: 1px; }#main-panel-task-board .progress-pct { font-size: 9px; color: var(--text-dim); font-weight: 600; }#main-panel-task-board .progress-bg { background: rgba(255,255,255,0.05); border-radius: 4px; height: 3px; }#main-panel-task-board .progress-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }#main-panel-task-board /* Subtasks */
+}
+.progress-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.progress-label { font-size: 9px; color: var(--text-faint); letter-spacing: 1px; }
+.progress-pct { font-size: 9px; color: var(--text-dim); font-weight: 600; }
+.progress-bg { background: rgba(255,255,255,0.05); border-radius: 4px; height: 3px; }
+.progress-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+
+/* Subtasks */
 .task-subtasks {
   display: none;
   border-top: 1px solid var(--border);
   padding: 12px 16px;
-}#main-panel-task-board .subtask {
+}
+.subtask {
   display: flex; align-items: center; gap: 10px;
   padding: 7px 0;
   border-bottom: 1px solid rgba(255,255,255,0.03);
-}#main-panel-task-board .subtask:last-child { border-bottom: none; }#main-panel-task-board .subtask-check {
+}
+.subtask:last-child { border-bottom: none; }
+.subtask-check {
   width: 16px; height: 16px; border-radius: 4px;
   border: 1px solid rgba(255,255,255,0.15);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; font-size: 9px;
-}#main-panel-task-board .subtask-check.done { background: rgba(45,184,138,0.2); border-color: #2db88a; color: #2db88a; }#main-panel-task-board .subtask-check.blocked { background: rgba(224,85,85,0.1); border-color: rgba(224,85,85,0.4); color: #e05555; }#main-panel-task-board .subtask-check.active { background: rgba(232,212,168,0.1); border-color: rgba(232,212,168,0.4); color: var(--gold); }#main-panel-task-board .subtask-text { font-size: 10px; color: var(--text-dim); flex: 1; line-height: 1.4; }#main-panel-task-board .subtask-text.done { text-decoration: line-through; color: var(--text-faint); }#main-panel-task-board .subtask-owner {
+}
+.subtask-check.done { background: rgba(45,184,138,0.2); border-color: #2db88a; color: #2db88a; }
+.subtask-check.blocked { background: rgba(224,85,85,0.1); border-color: rgba(224,85,85,0.4); color: #e05555; }
+.subtask-check.active { background: rgba(232,212,168,0.1); border-color: rgba(232,212,168,0.4); color: var(--gold); }
+.subtask-text { font-size: 10px; color: var(--text-dim); flex: 1; line-height: 1.4; }
+.subtask-text.done { text-decoration: line-through; color: var(--text-faint); }
+.subtask-owner {
   font-size: 8px; letter-spacing: 1px; padding: 1px 6px;
   border-radius: 10px; border: 1px solid var(--border);
   color: var(--text-faint); white-space: nowrap;
-}#main-panel-task-board /* ── PHASE TIMELINE ── */
-.phase-timeline { display: flex; flex-direction: column; gap: 2px; margin-bottom: 28px; }#main-panel-task-board .phase-row {
+}
+
+/* ── PHASE TIMELINE ── */
+.phase-timeline { display: flex; flex-direction: column; gap: 2px; margin-bottom: 28px; }
+.phase-row {
   display: flex; align-items: stretch; gap: 0;
   position: relative;
-}#main-panel-task-board .phase-connector {
+}
+.phase-connector {
   width: 2px; background: var(--border); margin: 0 19px;
   flex-shrink: 0;
-}#main-panel-task-board .phase-node {
+}
+.phase-node {
   width: 40px; height: 40px; border-radius: 50%;
   border: 2px solid;
   display: flex; align-items: center; justify-content: center;
   font-size: 13px; font-weight: 700; flex-shrink: 0;
   margin-right: 16px;
   position: relative; z-index: 2;
-}#main-panel-task-board .phase-body { flex: 1; padding: 8px 0 24px; }#main-panel-task-board .phase-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; }#main-panel-task-board .phase-desc { font-size: 10px; color: var(--text-dim); line-height: 1.5; max-width: 600px; }#main-panel-task-board .phase-status { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }#main-panel-task-board /* ── BRAIN ROADMAP ── */
+}
+.phase-body { flex: 1; padding: 8px 0 24px; }
+.phase-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.phase-desc { font-size: 10px; color: var(--text-dim); line-height: 1.5; max-width: 600px; }
+.phase-status { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+
+/* ── BRAIN ROADMAP ── */
 .brain-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 14px;
-}#main-panel-task-board .brain-card {
+}
+.brain-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 16px;
   transition: border-color .2s;
-}#main-panel-task-board .brain-card:hover { border-color: rgba(232,212,168,0.2); }#main-panel-task-board .brain-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }#main-panel-task-board .brain-icon { font-size: 20px; }#main-panel-task-board .brain-function { font-size: 12px; font-weight: 700; color: var(--text); }#main-panel-task-board .brain-bio { font-size: 9px; letter-spacing: 1px; color: var(--text-faint); text-transform: uppercase; margin-top:1px; }#main-panel-task-board .brain-tech { font-size: 10px; color: var(--text-dim); line-height: 1.5; margin-bottom: 8px; }#main-panel-task-board .brain-status-row { display: flex; justify-content: space-between; align-items: center; }#main-panel-task-board .brain-readiness { font-size: 11px; font-weight: 700; }#main-panel-task-board .brain-year { font-size: 9px; color: var(--text-faint); letter-spacing: 1px; }#main-panel-task-board /* ── OVERALL PROGRESS ── */
+}
+.brain-card:hover { border-color: rgba(232,212,168,0.2); }
+.brain-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.brain-icon { font-size: 20px; }
+.brain-function { font-size: 12px; font-weight: 700; color: var(--text); }
+.brain-bio { font-size: 9px; letter-spacing: 1px; color: var(--text-faint); text-transform: uppercase; margin-top:1px; }
+.brain-tech { font-size: 10px; color: var(--text-dim); line-height: 1.5; margin-bottom: 8px; }
+.brain-status-row { display: flex; justify-content: space-between; align-items: center; }
+.brain-readiness { font-size: 11px; font-weight: 700; }
+.brain-year { font-size: 9px; color: var(--text-faint); letter-spacing: 1px; }
+
+/* ── OVERALL PROGRESS ── */
 .master-progress {
   background: var(--surface);
   border: 1px solid rgba(232,212,168,0.15);
@@ -520,64 +605,89 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 20px;
-}#main-panel-task-board .mp-item { text-align: center; }#main-panel-task-board .mp-num { font-size: 32px; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }#main-panel-task-board .mp-lbl { font-size: 8px; letter-spacing: 2px; color: var(--text-faint); text-transform: uppercase; margin-top: 4px; }#main-panel-task-board .big-progress {
+}
+.mp-item { text-align: center; }
+.mp-num { font-size: 32px; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+.mp-lbl { font-size: 8px; letter-spacing: 2px; color: var(--text-faint); text-transform: uppercase; margin-top: 4px; }
+
+.big-progress {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 20px 24px;
   margin-bottom: 28px;
-}#main-panel-task-board .big-progress-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }#main-panel-task-board .big-progress-label { font-size: 13px; font-weight: 600; color: var(--text); }#main-panel-task-board .big-progress-pct { font-size: 22px; font-weight: 700; color: var(--gold); }#main-panel-task-board .big-progress-bg { background: rgba(255,255,255,0.05); border-radius: 6px; height: 8px; }#main-panel-task-board .big-progress-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--gold) 0%, rgba(232,212,168,0.4) 100%); transition: width 1.2s ease; }#main-panel-task-board /* ── GATE ITEMS ── */
-.gate-list { display: flex; flex-direction: column; gap: 10px; }#main-panel-task-board .gate-item {
+}
+.big-progress-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.big-progress-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.big-progress-pct { font-size: 22px; font-weight: 700; color: var(--gold); }
+.big-progress-bg { background: rgba(255,255,255,0.05); border-radius: 6px; height: 8px; }
+.big-progress-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--gold) 0%, rgba(232,212,168,0.4) 100%); transition: width 1.2s ease; }
+
+/* ── GATE ITEMS ── */
+.gate-list { display: flex; flex-direction: column; gap: 10px; }
+.gate-item {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 14px 16px;
   display: flex; align-items: center; gap: 14px;
-}#main-panel-task-board .gate-dot {
+}
+.gate-dot {
   width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
-}#main-panel-task-board .gate-body { flex: 1; }#main-panel-task-board .gate-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }#main-panel-task-board .gate-detail { font-size: 10px; color: var(--text-dim); }#main-panel-task-board .gate-owner { font-size: 9px; letter-spacing: 1px; color: var(--text-faint); border: 1px solid var(--border); border-radius: 10px; padding: 2px 8px; white-space: nowrap; }#main-panel-task-board /* ── EXPAND HINT ── */
+}
+.gate-body { flex: 1; }
+.gate-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.gate-detail { font-size: 10px; color: var(--text-dim); }
+.gate-owner { font-size: 9px; letter-spacing: 1px; color: var(--text-faint); border: 1px solid var(--border); border-radius: 10px; padding: 2px 8px; white-space: nowrap; }
+
+/* ── EXPAND HINT ── */
 .expand-hint {
   font-size: 9px; letter-spacing: 1px; color: var(--text-faint);
   text-align: center; padding: 6px;
   text-transform: uppercase;
 }
 
-@#main-panel-task-board media (max-width: 768px) {
+@media (max-width: 768px) {
   #nav { overflow-x: auto; white-space: nowrap; }
   .board-grid { grid-template-columns: 1fr; }
   .master-progress { grid-template-columns: 1fr 1fr; }
   .brain-grid { grid-template-columns: 1fr; }
-}#main-panel-task-board 50% {opacity:0.2}#main-panel-task-board }
- }
+}
+
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+@keyframes spin { to { transform: rotate(360deg); } }
 .wr-msg {
   background: rgba(255,255,255,0.025);
   border: 1px solid rgba(255,255,255,0.07);
   border-radius: 10px;
   padding: 12px 16px;
-}#main-panel-task-board .wr-msg-header {
+}
+.wr-msg-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 6px;
   flex-wrap: wrap;
   gap: 6px;
-}#main-panel-task-board .wr-from { font-size: 11px; color: var(--gold); font-weight: 700; letter-spacing: 1px; }#main-panel-task-board .wr-time { font-size: 10px; color: var(--text-faint); }#main-panel-task-board .wr-subject { font-size: 13px; color: var(--text); font-weight: 600; margin-bottom: 5px; }#main-panel-task-board .wr-body { font-size: 11px; color: var(--text-dim); line-height: 1.6; white-space: pre-wrap; }#main-panel-task-board .wr-pri {
+}
+.wr-from { font-size: 11px; color: var(--gold); font-weight: 700; letter-spacing: 1px; }
+.wr-time { font-size: 10px; color: var(--text-faint); }
+.wr-subject { font-size: 13px; color: var(--text); font-weight: 600; margin-bottom: 5px; }
+.wr-body { font-size: 11px; color: var(--text-dim); line-height: 1.6; white-space: pre-wrap; }
+.wr-pri {
   font-size: 9px; padding: 2px 7px; border-radius: 4px;
   text-transform: uppercase; letter-spacing: 1px; font-weight: 700;
-}#main-panel-task-board .wr-pri-critical { background: rgba(224,85,85,0.15); color: #e05555; border: 1px solid rgba(224,85,85,0.3); }#main-panel-task-board .wr-pri-high { background: rgba(232,212,168,0.12); color: var(--gold); border: 1px solid rgba(232,212,168,0.25); }#main-panel-task-board .wr-pri-normal { background: rgba(45,184,138,0.08); color: #2db88a; border: 1px solid rgba(45,184,138,0.2); }
-
-@keyframes blink { 0%,100%{opacity:1}
-@keyframes spin { to { transform: rotate(360deg); }
+}
+.wr-pri-critical { background: rgba(224,85,85,0.15); color: #e05555; border: 1px solid rgba(224,85,85,0.3); }
+.wr-pri-high     { background: rgba(232,212,168,0.12); color: var(--gold); border: 1px solid rgba(232,212,168,0.25); }
+.wr-pri-normal   { background: rgba(45,184,138,0.08); color: #2db88a; border: 1px solid rgba(45,184,138,0.2); }
 </style>
-</head>
-<body>
-<!-- ── Main Tab Navigation ── -->
+</head><body>
 <div id="main-nav">
   <div class="main-tab active" onclick="switchMainTab('war-room', this)">War Room</div>
   <div class="main-tab" onclick="switchMainTab('task-board', this)">Task Board</div>
 </div>
-
-<!-- ── Panel: War Room (default) ── -->
 <div id="main-panel-war-room" class="main-panel active">
 <div class="layout">
 
@@ -638,33 +748,33 @@
   <!-- Phase Progress -->
   <div class="full-card">
     <div class="card-title">Mission Phases</div>
-    <div class="progress-section">
-      <div class="progress-header">
-        <span class="progress-label">Phase 1 — Sovereign Infrastructure</span>
-        <span class="progress-pct">100%</span>
+    <div class="wr-progress-section">
+      <div class="wr-progress-header">
+        <span class="wr-progress-label">Phase 1 — Sovereign Infrastructure</span>
+        <span class="wr-progress-pct">100%</span>
       </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+      <div class="wr-progress-bar"><div class="wr-progress-fill" style="width:100%"></div></div>
     </div>
-    <div class="progress-section" style="margin-top:1rem;">
-      <div class="progress-header">
-        <span class="progress-label">Phase 2 — NitroBial Alpha + OMRI</span>
-        <span class="progress-pct">35%</span>
+    <div class="wr-progress-section" style="margin-top:1rem;">
+      <div class="wr-progress-header">
+        <span class="wr-progress-label">Phase 2 — NitroBial Alpha + OMRI</span>
+        <span class="wr-progress-pct">35%</span>
       </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:35%"></div></div>
+      <div class="wr-progress-bar"><div class="wr-progress-fill" style="width:35%"></div></div>
     </div>
-    <div class="progress-section" style="margin-top:1rem;">
-      <div class="progress-header">
-        <span class="progress-label">Phase 3 — Edge Intelligence + IronSite v2</span>
-        <span class="progress-pct">5%</span>
+    <div class="wr-progress-section" style="margin-top:1rem;">
+      <div class="wr-progress-header">
+        <span class="wr-progress-label">Phase 3 — Edge Intelligence + IronSite v2</span>
+        <span class="wr-progress-pct">5%</span>
       </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:5%"></div></div>
+      <div class="wr-progress-bar"><div class="wr-progress-fill" style="width:5%"></div></div>
     </div>
-    <div class="progress-section" style="margin-top:1rem;">
-      <div class="progress-header">
-        <span class="progress-label">Phase 4 — Sovereign Cognitive OS</span>
-        <span class="progress-pct">0%</span>
+    <div class="wr-progress-section" style="margin-top:1rem;">
+      <div class="wr-progress-header">
+        <span class="wr-progress-label">Phase 4 — Sovereign Cognitive OS</span>
+        <span class="wr-progress-pct">0%</span>
       </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+      <div class="wr-progress-bar"><div class="wr-progress-fill" style="width:0%"></div></div>
     </div>
   </div>
 
@@ -889,8 +999,6 @@ loadAll();
 setInterval(loadAll, 30000);
 </script>
 </div>
-
-<!-- ── Panel: Task Board ── -->
 <div id="main-panel-task-board" class="main-panel">
 <div id="header">
   <div id="header-left">
@@ -1705,7 +1813,6 @@ setTimeout(() => {
 .wr-pri-normal   { background: rgba(45,184,138,0.08); color: #2db88a; border: 1px solid rgba(45,184,138,0.2); }
 </style>
 </div>
-
 <script>
 function switchMainTab(name, el) {
   document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
@@ -1715,16 +1822,15 @@ function switchMainTab(name, el) {
   if (name === 'task-board') {
     if (typeof updateStats === 'function') updateStats();
     setTimeout(() => {
-      document.querySelectorAll('#main-panel-task-board .progress-fill, #main-panel-task-board .big-progress-fill').forEach(el => {
-        const w = el.style.width;
-        el.style.width = '0%';
-        setTimeout(() => { el.style.width = w; }, 50);
+      document.querySelectorAll('#main-panel-task-board .progress-fill, #main-panel-task-board .big-progress-fill').forEach(bar => {
+        const w = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(() => { bar.style.width = w; }, 50);
       });
-    }, 100);
+    }, 150);
   }
 }
 </script>
-
 <script>
 
 function switchTab(name) {
