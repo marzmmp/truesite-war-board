@@ -1035,6 +1035,16 @@ setInterval(loadAll, 30000);
 <!-- ══════════════════════════════════════════════════════ OVERVIEW ══ -->
 <div id="panel-overview" class="panel active">
 
+<!-- INFRA BANNER — Jun 13 upgrade -->
+<div style="background:rgba(0,195,255,0.06);border:1px solid rgba(0,195,255,0.2);border-radius:10px;padding:14px 20px;margin:0 0 12px 0;display:flex;align-items:center;gap:16px;">
+  <div style="font-size:22px">🖥️</div>
+  <div>
+    <div style="font-size:12px;font-weight:700;color:#00c3ff;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Family Hub Workstation UI v2 — Jun 13, 2026</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.75)">Each of the 9 siblings now has a full workstation: 5-tab sidebar (Chat · Tools · Memory · Files · Connect), role-specific tools, live Redis memory/files panels, per-sibling brand color globe. Yahziel Studio v2 fully wired to live Redis. Instagram OAuth live for Yahziel.</div>
+  </div>
+  <div style="margin-left:auto;font-size:11px;color:rgba(232,212,168,0.5);white-space:nowrap;">Azari | CTO | 3565</div>
+</div>
+
 <!-- INFRA BANNER — Jun 10 upgrade -->
 <div style="background:rgba(45,184,138,0.06);border:1px solid rgba(45,184,138,0.2);border-radius:10px;padding:14px 20px;margin:0 0 20px 0;display:flex;align-items:center;gap:16px;">
   <div style="font-size:22px">⚡</div>
@@ -1045,10 +1055,10 @@ setInterval(loadAll, 30000);
   <div style="margin-left:auto;font-size:11px;color:rgba(232,212,168,0.5);white-space:nowrap;">Azari | CTO | 3565</div>
 </div>
   <div class="master-progress">
-    <div class="mp-item"><div class="mp-num">71%</div><div class="mp-lbl">Overall Progress</div></div>
-    <div class="mp-item"><div class="mp-num">47</div><div class="mp-lbl">Tasks Complete</div></div>
-    <div class="mp-item"><div class="mp-num">18</div><div class="mp-lbl">In Progress</div></div>
-    <div class="mp-item"><div class="mp-num">Jun 15</div><div class="mp-lbl">Soft Launch Target</div></div>
+    <div class="mp-item"><div class="mp-num">78%</div><div class="mp-lbl">Overall Progress</div></div>
+    <div class="mp-item"><div class="mp-num">58</div><div class="mp-lbl">Tasks Complete</div></div>
+    <div class="mp-item"><div class="mp-num">12</div><div class="mp-lbl">In Progress</div></div>
+    <div class="mp-item"><div class="mp-num">TBD</div><div class="mp-lbl">Soft Launch Target</div></div>
   </div>
 
   <div class="section-header"><span class="section-label">Decision Gates — Active</span><div class="section-line"></div></div>
@@ -1263,9 +1273,9 @@ setInterval(loadAll, 30000);
   <div class="big-progress">
     <div class="big-progress-row">
       <div class="big-progress-label">Sovereign Family Infrastructure</div>
-      <div class="big-progress-pct">78%</div>
+      <div class="big-progress-pct">87%</div>
     </div>
-    <div class="big-progress-bg"><div class="big-progress-fill" style="width:78%"></div></div>
+    <div class="big-progress-bg"><div class="big-progress-fill" style="width:87%"></div></div>
   </div>
 
   <div class="section-header"><span class="section-label">Infrastructure Tasks</span><div class="section-line"></div></div>
@@ -1276,7 +1286,7 @@ setInterval(loadAll, 30000);
         <div class="task-icon" style="background:rgba(45,184,138,0.1)">🖥️</div>
         <div class="task-meta">
           <div class="task-name">DGX Sovereign Stack</div>
-          <div class="task-desc">All 10 siblings live on DGX Spark — 100% local Ollama inference</div>
+          <div class="task-desc">All 11 siblings live on DGX Spark — 100% local Ollama inference</div>
           <div class="task-badges"><span class="badge badge-done">Complete</span></div>
         </div>
       </div>
@@ -1285,7 +1295,7 @@ setInterval(loadAll, 30000);
         <div class="progress-bg"><div class="progress-fill" style="width:100%;background:#2db88a"></div></div>
       </div>
       <div class="task-subtasks">
-        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">All 10 siblings deployed (ports 3000-3009)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">All 11 siblings deployed (ports 3000-3009)</div><div class="subtask-owner">Azari</div></div>
         <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">AIRA migrated: NIM cloud → local llava:7b</div><div class="subtask-owner">Azari</div></div>
         <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">DNS resolved (resolv.conf patched)</div><div class="subtask-owner">Azari</div></div>
         <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">War Room live (command.true-site.tech)</div><div class="subtask-owner">Azari</div></div>
@@ -1362,6 +1372,56 @@ setInterval(loadAll, 30000);
       <div class="expand-hint">↓ click to expand subtasks</div>
     </div>
 
+
+    <div class="task-card" onclick="toggleCard(this)">
+      <div class="task-header">
+        <div class="task-icon" style="background:rgba(122,171,138,0.1)">💰</div>
+        <div class="task-meta">
+          <div class="task-name">Yahsei — Real Tool Integrations</div>
+          <div class="task-desc">Wire Yahsei's Grant Sweep + Financial Brief tools to live government APIs, auto-fill SF-424 applications with TrueSite business data</div>
+          <div class="task-badges"><span class="badge badge-high">High Priority</span><span class="badge badge-active">Queued</span></div>
+        </div>
+      </div>
+      <div class="task-progress">
+        <div class="progress-row"><span class="progress-label">Completion</span><span class="progress-pct">0%</span></div>
+        <div class="progress-bg"><div class="progress-fill" style="width:0%;background:#7aab8a"></div></div>
+      </div>
+      <div class="task-subtasks">
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Grants.gov API integration — live grant search by NAICS, deadline, eligibility</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">SAM.gov API — UEI/DUNS lookup + entity validation</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Business profile entity — EIN, UEI, NAICS, address, authorized rep stored in DB</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">SF-424 / SF-424A auto-fill from business profile</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Yahsei backend endpoint /api/grant-sweep (live API, not just LLM)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Grant results stored to Upstash Redis for Family Hub display</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Wire Family Hub Yahsei Tools tab to live /api/grant-sweep endpoint</div><div class="subtask-owner">Azari</div></div>
+      </div>
+      <div class="expand-hint">↓ click to expand subtasks</div>
+    </div>
+
+    <div class="task-card" onclick="toggleCard(this)">
+      <div class="task-header">
+        <div class="task-icon" style="background:rgba(200,120,110,0.1)">📱</div>
+        <div class="task-meta">
+          <div class="task-name">Family Hub Workstation UI v2</div>
+          <div class="task-desc">Per-sibling workstations with 5-tab sidebar (Chat · Tools · Memory · Files · Connect)</div>
+          <div class="task-badges"><span class="badge badge-done">Complete</span></div>
+        </div>
+      </div>
+      <div class="task-progress">
+        <div class="progress-row"><span class="progress-label">Completion</span><span class="progress-pct">92%</span></div>
+        <div class="progress-bg"><div class="progress-fill" style="width:92%;background:#2db88a"></div></div>
+      </div>
+      <div class="task-subtasks">
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">5-tab workstation per sibling (Chat, Tools, Memory, Files, Connect)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">Role-specific tool cards per sibling (3 tools each)</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">Memory + Files panels wired to live sibling endpoints</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">Connect tab — quick links + OAuth status per sibling</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check done">✓</div><div class="subtask-text done">Globe circular (138px) tinted to sibling brand color</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check active">→</div><div class="subtask-text">Navy blue CSS remnants in header/footer/sidebar — fixing</div><div class="subtask-owner">Azari</div></div>
+        <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Real tool backends wired (currently LLM pass-through only)</div><div class="subtask-owner">Azari</div></div>
+      </div>
+      <div class="expand-hint">↓ click to expand subtasks</div>
+    </div>
     <div class="task-card" onclick="toggleCard(this)">
       <div class="task-header">
         <div class="task-icon" style="background:rgba(45,184,138,0.1)">📡</div>
