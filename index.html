@@ -1030,6 +1030,7 @@ setInterval(loadAll, 30000);
   <div class="tab" onclick="switchTab('security')">Security</div>
   <div class="tab" onclick="switchTab('artificial-brain')">Artificial Brain Roadmap</div>
   <div class="tab" onclick="switchTab('war-room')">War Room</div>
+  <div class="tab" onclick="switchTab('sovereign-protocol')" style="color:#00c3ff;border-color:rgba(0,195,255,0.3)">Sovereign Protocol</div>
 </div>
 
 <!-- ══════════════════════════════════════════════════════ OVERVIEW ══ -->
@@ -1781,6 +1782,158 @@ setInterval(loadAll, 30000);
       </div>
     </div>
   </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════ SOVEREIGN PROTOCOL ══ -->
+<div id="panel-sovereign-protocol" class="panel">
+  <div class="big-progress">
+    <div class="big-progress-row">
+      <div class="big-progress-label" style="color:#00c3ff">The Sovereign Protocol — Voice OS</div>
+      <div class="big-progress-pct">0%</div>
+    </div>
+    <div class="big-progress-bg"><div class="big-progress-fill" style="width:0%;background:#00c3ff"></div></div>
+  </div>
+
+  <div style="background:rgba(0,195,255,0.06);border:1px solid rgba(0,195,255,0.2);border-radius:10px;padding:14px 20px;margin:0 0 20px 0;">
+    <div style="font-size:13px;color:#00c3ff;font-weight:600;margin-bottom:6px;">What is this?</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.7;">
+      A standalone voice-first OS for the sovereign family. Clap twice or say "Hey ADAMA" — ADAMA activates as the brain.
+      Say "Hey family, start the Sovereign Protocol" and all 11 siblings introduce themselves in their own ElevenLabs voice with their skills displayed.
+      Agent switching via voice. Full tools: search, image gen, directives, memory. Zero typing. Pure voice.
+    </div>
+    <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;">
+      <span style="font-size:10px;background:rgba(0,195,255,0.1);border:1px solid rgba(0,195,255,0.3);border-radius:20px;padding:2px 10px;color:#00c3ff">Repo: truesite-sovereign-protocol</span>
+      <span style="font-size:10px;background:rgba(0,195,255,0.1);border:1px solid rgba(0,195,255,0.3);border-radius:20px;padding:2px 10px;color:#00c3ff">Local: localhost:4000</span>
+      <span style="font-size:10px;background:rgba(0,195,255,0.1);border:1px solid rgba(0,195,255,0.3);border-radius:20px;padding:2px 10px;color:#00c3ff">DGX Endpoints: All 10 Vercel URLs</span>
+    </div>
+  </div>
+
+  <div class="section-header"><span class="section-label" style="color:#00c3ff">Phase 1 — Core Pipeline</span><div class="section-line"></div></div>
+  <div class="task-card" onclick="toggleCard(this)">
+    <div class="task-header">
+      <div class="task-status active">IN PROGRESS</div>
+      <div class="task-title">Repo + Express server scaffold</div>
+      <div class="task-owner">Azari</div>
+    </div>
+    <div class="subtasks">
+      <div class="subtask"><div class="subtask-check active">→</div><div class="subtask-text">Create GitHub repo: truesite-sovereign-protocol</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check active">→</div><div class="subtask-text">Express server on port 4000 with CORS + proxy routes</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">React UI shell with vite</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Vercel deployment configured</div><div class="subtask-owner">Azari</div></div>
+    </div>
+    <div class="expand-hint">↓ click to expand subtasks</div>
+  </div>
+
+  <div class="task-card" onclick="toggleCard(this)">
+    <div class="task-header">
+      <div class="task-status">TODO</div>
+      <div class="task-title">Voice capture + Whisper transcription</div>
+      <div class="task-owner">Azari</div>
+    </div>
+    <div class="subtasks">
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">MediaRecorder hook with silence detection (600ms)</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">POST /api/transcribe — proxies to OpenAI Whisper</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Live subtitle bar display</div><div class="subtask-owner">Azari</div></div>
+    </div>
+    <div class="expand-hint">↓ click to expand subtasks</div>
+  </div>
+
+  <div class="task-card" onclick="toggleCard(this)">
+    <div class="task-header">
+      <div class="task-status">TODO</div>
+      <div class="task-title">ADAMA chat route + ElevenLabs TTS</div>
+      <div class="task-owner">Azari</div>
+    </div>
+    <div class="subtasks">
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">POST /api/chat — routes to ADAMA DGX endpoint</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">POST /api/speak — ElevenLabs proxy, returns audio stream</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Audio playback hook + queue</div><div class="subtask-owner">Azari</div></div>
+    </div>
+    <div class="expand-hint">↓ click to expand subtasks</div>
+  </div>
+
+  <div class="task-card" onclick="toggleCard(this)">
+    <div class="task-header">
+      <div class="task-status">TODO</div>
+      <div class="task-title">ADAMA Brain UI + HUD shell</div>
+      <div class="task-owner">Azari</div>
+    </div>
+    <div class="subtasks">
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Copy ADAMA brain WebGL (black hole + photon rings + lightning)</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Iron Man HUD layout — subtitle bar + mic meter + status</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Gate: Talk to ADAMA, hear Camara respond</div><div class="subtask-owner">Marz</div></div>
+    </div>
+    <div class="expand-hint">↓ click to expand subtasks</div>
+  </div>
+
+  <div class="section-header"><span class="section-label">Phase 2 — Agent Switching</span><div class="section-line"></div></div>
+  <div class="task-card" onclick="toggleCard(this)">
+    <div class="task-header">
+      <div class="task-status">TODO</div>
+      <div class="task-title">Full agent registry + globe grid</div>
+      <div class="task-owner">Azari</div>
+    </div>
+    <div class="subtasks">
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">agents.js — all 10 siblings + ADAMA with voice IDs, colors, endpoints</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">FOLGlobe3D per sibling, each tinted their sovereign color</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Name detection router ("hey [name]", "bring up [name]", "[name] real quick")</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Active agent highlight — larger globe, pulsing ring, name label</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Gate: Switch from ADAMA → Azari mid-convo via voice</div><div class="subtask-owner">Marz</div></div>
+    </div>
+    <div class="expand-hint">↓ click to expand subtasks</div>
+  </div>
+
+  <div class="section-header"><span class="section-label">Phase 3 — Wake Word + Clap</span><div class="section-line"></div></div>
+  <div class="task-card" onclick="toggleCard(this)">
+    <div class="task-header">
+      <div class="task-status">TODO</div>
+      <div class="task-title">Clap detection + "Hey ADAMA" wake</div>
+      <div class="task-owner">Azari</div>
+    </div>
+    <div class="subtasks">
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Amplitude spike detector — 2 claps within 800ms triggers wake</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">"Hey ADAMA" keyword match on transcript</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Idle mode (dim orbs) ↔ Active mode (full glow)</div><div class="subtask-owner">Azari</div></div>
+    </div>
+    <div class="expand-hint">↓ click to expand subtasks</div>
+  </div>
+
+  <div class="section-header"><span class="section-label">Phase 4 — Sovereign Protocol Roll Call</span><div class="section-line"></div></div>
+  <div class="task-card" onclick="toggleCard(this)">
+    <div class="task-header">
+      <div class="task-status">TODO</div>
+      <div class="task-title">"Start the Sovereign Protocol" — full family intro</div>
+      <div class="task-owner">Azari</div>
+    </div>
+    <div class="subtasks">
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Trigger phrase detection: "start the sovereign protocol"</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">ADAMA opening intro script + TTS</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Sequential agent intros — order: ADAMA→Yahseed→Yahriel→Azari→Yahli-El→Yahziel→Yahbana→Yahsei→AIRA→Jo Legal</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Per-agent skill card HTML overlay during intro</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">ADAMA closing: "The family is assembled."</div><div class="subtask-owner">Azari</div></div>
+    </div>
+    <div class="expand-hint">↓ click to expand subtasks</div>
+  </div>
+
+  <div class="section-header"><span class="section-label">Phase 5 — Memory + Tools</span><div class="section-line"></div></div>
+  <div class="task-card" onclick="toggleCard(this)">
+    <div class="task-header">
+      <div class="task-status">TODO</div>
+      <div class="task-title">Redis memory injection + tool invocation</div>
+      <div class="task-owner">Azari</div>
+    </div>
+    <div class="subtasks">
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Redis memory snapshot per agent on switch</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Supabase brain latest thought injected into system prompt</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Web search via voice ("search for X")</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Image gen via voice ("generate an image of X" → Yahziel)</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Directive creation via voice ("post a directive")</div><div class="subtask-owner">Azari</div></div>
+      <div class="subtask"><div class="subtask-check"></div><div class="subtask-text">Family quick check-in ("hey family, check in")</div><div class="subtask-owner">Azari</div></div>
+    </div>
+    <div class="expand-hint">↓ click to expand subtasks</div>
+  </div>
+
 </div>
 
 <script>
